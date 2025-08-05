@@ -1,7 +1,8 @@
 # tycoon-game-py
 tycoon game made in python with tkinter, this is for school project thing
 
-Current Features (as of v0.1):
+
+Current Features (as of v0.2.1):
 
 Shop GUI
 
@@ -9,16 +10,19 @@ Upgrade GUI
 
 Slot machine
 
+Save System (with JSON Files)
+
 
 Fixes:
 
-Fixed gambling randomly adding 100G to current amount of G
+Fixed gambling just not working
+Fixed upgrades only upgrading one generator
+
 
 In development:
 
-More generators (hooray)
-
-Save system (will take a month)
+More fixes
+More content
 
 How to use:
 
