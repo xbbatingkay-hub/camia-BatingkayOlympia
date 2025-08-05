@@ -300,14 +300,14 @@ def shop():
 
 def gamble():
     global g
-    gambleg = 100
+    g = g
     roll = 5
     entry_paid = False  # <-- Add this flag
 
     def gambling():
         global g
         g=g
-        nonlocal gambleg, roll, entry_paid
+        nonlocal roll, entry_paid
         # Play sound in a non-blocking way
         try:
             playsound.playsound('slot-machine.wav', block=False)
@@ -319,10 +319,9 @@ def gamble():
             if g < 100:
                 msg_label.config(text="100G needed")
                 return
-            g -= 100
             g_label.config(text=f"{g}G", font=("Cascadia Code", 25))
             entry_paid = True  # <-- Set flag so fee is only paid once
-        gambleg -= roll
+        g -= roll
         select_button.config(text=f"roll [${roll}]")
         select_button.config(state="disabled")
         msg_label.place(x=154, y=60)
@@ -337,18 +336,18 @@ def gamble():
         root.after(200, lambda: result_label2.config(text=f"[{selected_item2}]"))
         root.after(400, lambda: result_label3.config(text=f"[{selected_item3}]"))
         def after_slots():
-            nonlocal gambleg, roll
+            nonlocal roll
             if selected_item1 == selected_item2 and selected_item1 == selected_item3:
                 if selected_item1 == "0":
                     msg_label.config(text="unlucky!")
                     x = random.choice(unluck)
                     root.after(1000, lambda: msg_label.config(text=f"{x}"))
                     if x == "poor :>":
-                        gambleg = 0
+                        g = 0
                     elif x == "taxes >:>":
-                        gambleg //= 2
+                        g //= 2
                     elif x == "compensation!":
-                        gambleg += 50
+                        g += 50
                 elif selected_item1 == "#":
                     msg_label.config(text="free reroll!")
                     roll = 0
@@ -358,14 +357,14 @@ def gamble():
                     msg_label.config(text="!7!7! JACKPOT !7!7!")
                     msg_label.place(x=80, y=60)
                     root.after(1000, lambda: msg_label.config(text=""))
-                    gambleg += 777
-            money_label.config(text=f"${gambleg}")
+                    g += 777
+            money_label.config(text=f"${g}")
             root.after(1000, lambda: result_label.config(text=f"[ ]"))
             root.after(1200, lambda: result_label2.config(text=f"[ ]"))
             root.after(1400, lambda: result_label3.config(text=f"[ ]"))
             root.after(1500, lambda: select_button.config(state="normal"))
         root.after(600, after_slots)
-        money_label.config(text=f"${gambleg}")
+        money_label.config(text=f"${g}")
 
     # Create the main window
     root2 = tk.Toplevel(root)
