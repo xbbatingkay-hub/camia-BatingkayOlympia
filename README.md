@@ -16,6 +16,7 @@ Save System (with JSON Files)
 Fixes:
 
 Fixed gambling just not working
+
 Fixed upgrades only upgrading one generator
 
 
