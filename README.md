@@ -2,6 +2,12 @@
 tycoon game made in python with tkinter, this is for school project thing
 
 
+THIS IS THE TEST VERSION.
+
+This branch is made to test new features and identify instabilities in between version as soon as possible, and this is NOT the official release.
+
+
+
 Current Features (as of v0.2.1):
 
 Shop GUI
