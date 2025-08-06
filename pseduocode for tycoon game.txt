@@ -14,11 +14,11 @@ DEFINE Generator Class:
 
 DEFINE BetterGenerator Class (similar to Generator)
     - Uses g_given2 and upgrade_cost2
-    - lvlup() increases level and multiplies g_given2 by 1.5
+    - lvlup() increases level and multiplies g_given2 by 2
 
 DEFINE IndusGenerator Class (similar to above)
     - Uses g_given3 and upgrade_cost3
-    - lvlup() increases level and multiplies g_given3 by 1.5
+    - lvlup() increases level and multiplies g_given3 by 2
 
 DEFINE click():
     - Increase g by clickg
@@ -66,6 +66,7 @@ CREATE MAIN WINDOW:
 START Tkinter mainloop
 
 END Program
+
 
 
 
