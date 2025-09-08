@@ -148,58 +148,83 @@ class MainScreen(Screen):
 
     def update(self, dt):
         self.g_label.text = f"{self.game.g:.1f}G"
+        self.level_label.text = f"Level: {self.game.level}"
+        self.exp_bar.max = self.game.next_level_exp
+        self.exp_bar.value = self.game.current_exp
 
 
 class ShopScreen(Screen):
     def __init__(self, game, **kwargs):
+        from kivy.uix.scrollview import ScrollView
+        from kivy.uix.boxlayout import BoxLayout
         super().__init__(**kwargs)
         self.game = game
-        self.layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
 
-        # Dynamic generator buttons
+        # Root layout: vertical, with scroll + back button
+        root_layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
+
+        # Scrollable part for generators
+        self.layout = BoxLayout(
+            orientation="vertical",
+            spacing=15,
+            size_hint_y=None
+        )
+        self.layout.bind(minimum_height=self.layout.setter("height"))
+
+        scroll = ScrollView(size_hint=(1, 1))
+        scroll.add_widget(self.layout)
+
+        # Add scroll area to root layout
+        root_layout.add_widget(scroll)
+
+        # Back button fixed at bottom
+        back_btn = Button(
+            text="Back",
+            size_hint=(None, None),
+            size=(150, 50),
+            on_press=lambda w: self.manager.switch_to(self.manager.get_screen("main"))
+        )
+        # Center the back button horizontally
+        from kivy.uix.anchorlayout import AnchorLayout
+        back_anchor = AnchorLayout(anchor_x="center", anchor_y="center", size_hint=(1, None), height=70)
+        back_anchor.add_widget(back_btn)
+        root_layout.add_widget(back_anchor)
+
+        # Add everything to the screen
+        self.add_widget(root_layout)
+
+        # Dynamic generator entries
         self.labels = []
         for i, gen in enumerate(self.game.generators):
-            label = Label(text=f"{gen.name}: {gen.count} | Cost: {gen.cost()}G | Output: {gen.gps}/s each")
-            buy_btn = Button(text=f"Buy {gen.name}", size_hint=(0.3, None))
+            gen_box = BoxLayout(orientation="vertical", spacing=5, size_hint=(1, None), height=90)
+
+            label = Label(
+                text=f"{gen.name}: {gen.count} | Cost: {gen.cost()}G | Output: {gen.gps}/s each",
+                size_hint=(1, None),
+                height=40
+            )
+
+            buy_btn = Button(
+                text=f"Buy {gen.name}",
+                size_hint=(None, None),
+                size=(200, 40)
+            )
             buy_btn.bind(on_press=lambda w, i=i: self.game.buy_generator(i))
-            self.layout.add_widget(label)
-            self.layout.add_widget(buy_btn)
+
+            gen_box.add_widget(label)
+            gen_box.add_widget(buy_btn)
+
+            self.layout.add_widget(gen_box)
             self.labels.append(label)
 
-        back_btn = Button(text="Back", on_press=lambda w: self.manager.switch_to(self.manager.get_screen("main")))
-        self.layout.add_widget(back_btn)
-
-        self.add_widget(self.layout)
+        # Update every 0.5 sec
         Clock.schedule_interval(self.update, 0.5)
 
     def update(self, dt):
         for i, gen in enumerate(self.game.generators):
-            self.labels[i].text = f"{gen.name}: {gen.count} | Cost: {gen.cost()}G | Output: {gen.gps}/s each"
-
-
-class StatsScreen(Screen):
-    def __init__(self, game, **kwargs):
-        super().__init__(**kwargs)
-        self.game = game
-
-        layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
-
-        self.level_label = Label(text=f"Level: {self.game.level}")
-        layout.add_widget(self.level_label)
-
-        self.exp_bar = ProgressBar(max=self.game.next_level_exp, value=self.game.current_exp)
-        layout.add_widget(self.exp_bar)
-
-        back_btn = Button(text="Back", on_press=lambda w: self.manager.switch_to(self.manager.get_screen("main")))
-        layout.add_widget(back_btn)
-
-        self.add_widget(layout)
-        Clock.schedule_interval(self.update, 0.5)
-
-    def update(self, dt):
-        self.level_label.text = f"Level: {self.game.level}"
-        self.exp_bar.max = self.game.next_level_exp
-        self.exp_bar.value = self.game.current_exp
+            self.labels[i].text = (
+                f"{gen.name}: {gen.count} | Cost: {gen.cost()}G | Output: {gen.gps}/s each"
+            )
 
 
 # --- Main App ---
@@ -216,7 +241,6 @@ class TycoonApp(App):
         sm.add_widget(SplashScreen(name="splash"))
         sm.add_widget(MainScreen(self.game, name="main"))
         sm.add_widget(ShopScreen(self.game, name="shop"))
-        sm.add_widget(StatsScreen(self.game, name="stats"))
         sm.current = "splash"
         return sm
 
