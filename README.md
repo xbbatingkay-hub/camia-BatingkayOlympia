@@ -24,6 +24,7 @@ Electricity Rework
 New Additions: 
 
 Randomized Generators: give 0-max amount of G per second (very random and unbalanced)
+
 New Game Title! (yayyyy :))
 
 
