@@ -1,10 +1,20 @@
-Tycoon Game to Destroy Boredom but not Weaken Attention Span (TGDBWAS)
+The Game Made to Destroy Boredom: The Game (GMDB:TG)
 
-In this new world, we often can't go 5 seconds without getting bored. I dare you, try to sit still, and not touch anything or even do anything. Do you feel it too? That's our body's urge to curb boredom. In this new age, the corporate giants of Silicon Valley capitalize on the temporary destruction of boredom, at the costs of our attention spans, and it sometimes feels as if we are being held to our screens involuntarily. But how does this game even help this?
+ 
 
-1. Minimalistic visuals
-very minimalistic visuals, because this is the kind of game you would play only when you want to play it. 
-2. Fun, but not addictive game loop
-I let people play the game and they say this exact same thing, so it's here now.
-3. Somehow original features
-It is reminiscent of a regular tycoon game (games where your goal is to get as much money as possible) but I am going to add more content to make it fun.
+This project aims to solve the problem of boredom, with minimalist graphics, sound effects, and minigames. A frustrating, interactive but not addicting game experience, based of Silicone Valley Capitalism. This is a great way to kill time when you are bored.
+
+The Game includes basic animations and graphics with background design and character sprites to be made, This Project can and will be finished as we are finished with most of the game. A new levelling system will be added and characters (such as Taxman) will be added with full animations and sprites.
+
+My partner and the main programmer is Bastijn Batingkay, I am currently working on the sprite art and animations. Currently a Mobile Port is being worked on, currently the Game features sleek GUI, new minigames, fun pro-tips, a Leveling System and planned to feature a background in 4 phases and a Character with Animations in 3 phases.
+
+ Gameplay:
+
+- Click the G Button to gain G (Thats money!)
+
+- Buy generators to generate more G, but watch out for inflation.
+
+- Fix and Check your generators status!
+
+- Pay your taxes 
+
