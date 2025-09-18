@@ -11,7 +11,7 @@ This project aims to solve the problem of boredom, with minimalist graphics, sou
 
 
 
-The Game includes basic animations and graphics with background design and character sprites to be made, This Project can and will be finished as we are finished with most of the game. A new levelling system will be added and characters (such as Taxman) will be added with full animations and sprites.
+The Game includes basic animations and graphics with background design and character sprites to be made, This Project can and will be finished as we are finished with most of the game.
 
 
 
