@@ -37,9 +37,16 @@ My partner and the main programmer is Bastijn Batingkay, I am currently working 
 
 - Pay your taxes
 
+# How to Play/Run
+
+1. Install Python and VS Code
+2. Install the Program and click the Game File
+3. Install all the extensions
+4. Allow Debugging, click manage and select trust
+5. Run the Game
 
   
-Current Features (as of v0.3.1):
+# Current Features (as of v0.3.1):
 
 Shop GUI
 
@@ -69,6 +76,26 @@ In development:
 More fixes
 More content
 Backgrounds
+
+# Example Output
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Contributors
+
+- Student1: Bastijn Batingkay: Programmer, Inputs and Head Developer
+- Student2: Jibrael Olympia: Graphics, Character and Background Artist, Game Tester
 
 
 
