@@ -47,6 +47,7 @@ If using the raw Python file...
 3A. Type these commands:
 
 pip install sv_ttk
+
 pip install pygame
 
 If these commands don't work, you probably forgot to check a box
