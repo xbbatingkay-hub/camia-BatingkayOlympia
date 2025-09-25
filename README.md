@@ -7,15 +7,15 @@ The Game Made to Destroy Boredom: The Game (GMDB:TG)
 
  
 
-This project aims to solve the problem of boredom, with minimalist graphics, sound effects, and minigames. A frustrating, interactive but not addicting game experience, based of Silicone Valley Capitalism. This is a great way to kill time when you are bored.
+This project aims to solve the problem of boredom, with minimalist graphics, sound effects, and minigames. A frustrating, interactive, but not addictive game experience, based on Silicon Valley Capitalism. This is a great way to kill time when you are bored.
 
 
 
-The Game includes basic animations and graphics with background design and character sprites to be made, This Project can and will be finished as we are finished with most of the game.
+The Game includes basic animations and graphics with background design and character sprites to be made. This Project can and will be finished as we have finished most of the game.
 
 
 
-My partner and the main programmer is Bastijn Batingkay, I am currently working on the sprite art and animations. Currently a Mobile Port is being worked on, currently the Game features sleek GUI, new minigames, fun pro-tips, a Leveling System and planned to feature a background in 4 phases and a Character with Animations in 3 phases.
+My partner and the main programmer is Bastijn Batingkay. I am currently working on the sprite art and animations. Currently, a Mobile Port is being worked on. The Game features a sleek GUI, new minigames, fun pro-tips, a Leveling System and planned to feature a background in 4 phases and a Character with Animations in 3 phases.
 
 
 
@@ -39,13 +39,33 @@ My partner and the main programmer is Bastijn Batingkay, I am currently working 
 
 # How to Play/Run
 
-1. Install Python and VS Code
-2. Install the Program and click the Game File
-3. Install all the extensions
-4. Allow Debugging, click manage and select trust
-5. Run the Game
+If using the raw Python file...
 
-  
+1. Install Python
+2. In the selection screen, check all the boxes
+3. Open your command prompt
+3A. Type these commands:
+
+pip install sv_ttk
+pip install pygame
+
+If these commands don't work, you probably forgot to check a box
+
+4. Open the python file (keep it inside its folder)
+
+
+If you dont wanna do all that...
+
+
+Download the executable files here:
+https://drive.google.com/drive/folders/1KrGCQRprnQmGtiIFKEZA8G78wadhtLxC
+
+
+Click on "Executable files for this game" and download whichever version you want
+(Note: for V0.3.1+, you need to keep the .exe file in its folder for it to function)
+
+
+
 # Current Features (as of v0.3.1):
 
 Shop GUI
