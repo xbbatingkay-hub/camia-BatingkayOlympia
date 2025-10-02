@@ -77,6 +77,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Build paths for the sound files
 try:
+    sound0_path = os.path.join(BASE_DIR, "sounds", "buttonpress0.mp3")
+except FileNotFoundError:
+    pass
+try:
     sound1_path = os.path.join(BASE_DIR, "sounds", "correct.mp3")
 except FileNotFoundError:
     pass
@@ -105,6 +109,7 @@ try:
 except FileNotFoundError:
     pass
 pygame.mixer.init() #for sfx
+sound0 = pygame.mixer.Sound(sound0_path)
 sound1 = pygame.mixer.Sound(sound1_path)
 sound2 = pygame.mixer.Sound(sound2_path)
 sound3 = pygame.mixer.Sound(sound3_path)
@@ -308,16 +313,16 @@ def shop():
         gen_stock = 15
         # Random chance for BetterGenerators and Industrial Generators to be in stock
         import random
-        if random.random() < 0.5:  # 50% chance to appear
-            bgen_stock = random.randint(1, 10)  # 1 or 2 in stock
+        if random.random() < 0.5:
+            bgen_stock = random.randint(1, 10)
         else:
-            bgen_stock = 0  # Not available this time
-        if random.random() < 0.3:  # 30% chance to appear
-            igen_stock = random.randint(1, 5)  # 1 or 2 in stock
+            bgen_stock = 0
+        if random.random() < 0.3:
+            igen_stock = random.randint(1, 5)
         else:
-            igen_stock = 0  # Not available this time
-        if random.random() < 0.777: # 77.7 chance to appear
-            randgen_stock = random.randint(1, 5) # 1 or 2 in stock 
+            igen_stock = 0
+        if random.random() < 0.777:
+            randgen_stock = random.randint(1, 5)
         else:
             randgen_stock = 0
 
@@ -421,17 +426,20 @@ def shop():
             igen_stock_label.config(text=f"Stock: {igen_stock}")
             igen_price = int(igen_price * 1.15)
     def randincrease():
+        sound0.play()
         global randgen_shop_amnt, randgen_stock
         if randgen_shop_amnt < randgen_stock:
             randgen_shop_amnt += 1
             randgen_shop_amnt_label.config(text = f"amount: {randgen_shop_amnt}")
     def randdecrease():
+        sound0.play()
         global randgen_shop_amnt, randgen_stock
         if randgen_shop_amnt != 1 and randgen_shop_amnt > 0:
             randgen_shop_amnt -= 1
             randgen_shop_amnt_label.config(text = f"amount: {randgen_shop_amnt}")
 
     def randbuy():
+        sound0.play()
         global g, randgen_price, randgen_shop_amnt, randgen_amnt, randgen_stock
 
         if g >= randgen_price * randgen_shop_amnt and randgen_shop_amnt <= randgen_stock:
@@ -456,6 +464,7 @@ def shop():
 
             randgen_price = int(randgen_price * 1.15)
     def restock():
+        sound0.play()
         nonlocal gen_stock_label, bgen_stock_label, randgen_stock_label
         global gen_stock, bgen_stock, igen_stock, randgen_stock
         global g
@@ -483,15 +492,53 @@ def shop():
 
     shop_window = tk.Toplevel(root)
     shop_window.title("Shop Menu")
-    shop_window.geometry("900x700")
-    shop_window.attributes('-fullscreen', True)  # Make shop fullscreen
-    
+    shop_window.attributes('-fullscreen', True)
+    shop_window.update_idletasks()
+
+    # --- SCROLLABLE CANVAS SETUP ---
+    canvas = tk.Canvas(shop_window, highlightthickness=0, bg="#f0f0f0")
+    scrollbar = ttk.Scrollbar(shop_window, orient="vertical", command=canvas.yview)
+
+    # Center frame inside canvas
+    outer_frame = tk.Frame(canvas, bg="#f0f0f0")
+    canvas.create_window((0, 0), window=outer_frame, anchor="center")
+
+    # Inner scrollable frame for shop widgets
+    scroll_frame = tk.Frame(outer_frame, bg="#f0f0f0")
+    scroll_frame.pack(expand=True, fill="both", padx=120, pady=60)  # Center with padding
+
+    def on_configure(event):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+        # Center the outer_frame in the canvas
+        canvas_width = canvas.winfo_width()
+        canvas_height = canvas.winfo_height()
+        canvas.coords(outer_frame, canvas_width // 2, canvas_height // 2)
+
+    scroll_frame.bind("<Configure>", on_configure)
+    canvas.bind("<Configure>", on_configure)
+
+    canvas.configure(yscrollcommand=scrollbar.set)
+    canvas.pack(side="left", fill="both", expand=True, padx=0, pady=0, anchor="center")
+    scrollbar.pack(side="right", fill="y")
+
+    # --- Enable mouse wheel scrolling ---
+    def _on_mousewheel(event):
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+    canvas.bind_all("<MouseWheel>", _on_mousewheel)  # Windows
+
+    # For Linux (if needed):
+    # canvas.bind_all("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
+    # canvas.bind_all("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
+
     def exit():
+        sound0.play()
         shop_window.destroy()
     shop_window.bind('<F4>', exit)
-    header = tk.Label(shop_window, text="SHOP", font=("Cascadia Code", 36, "bold"))
+    shop_window.bind('<Escape>', lambda e: shop_window.destroy())
+
+    header = tk.Label(scroll_frame, text="SHOP", font=("Cascadia Code", 36, "bold"), bg="#f0f0f0")
     header.pack(pady=20)
-    shop_g = tk.Label(shop_window, text=f"{g}G\npress F4 to exit", font=("Cascadia Code", 30))
+    shop_g = tk.Label(scroll_frame, text=f"{g}G\npress F4 to exit", font=("Cascadia Code", 30), bg="#f0f0f0")
     shop_g.pack(pady=10)
     def update_shop_g():
         shop_g.config(text=f"{format(g)}G")
@@ -500,10 +547,11 @@ def shop():
     def exit_fullscreen1(event=None):
         shop_window.destroy()
     shop_window.bind('<Escape>', exit_fullscreen1)
+
     # --- Standard Generator Section ---
-    std_frame = tk.LabelFrame(shop_window, text="Standard G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
+    std_frame = tk.LabelFrame(scroll_frame, text="Standard G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     std_frame.pack(fill="x", padx=40, pady=10)
-    
+
     gen_item = tk.Label(std_frame, text="Standard G generator (1g/s)", font=("Arial", 16))
     gen_item.grid(row=0, column=0, sticky="w")
     shop_amnt = tk.Label(std_frame, text=f"amount: {gen_shop_amnt}", font=("Arial", 16))
@@ -522,7 +570,7 @@ def shop():
     buy_button.grid(row=2, column=0, pady=10)
 
     # --- Massive Generator Section ---
-    bgen_frame = tk.LabelFrame(shop_window, text="Massive G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
+    bgen_frame = tk.LabelFrame(scroll_frame, text="Massive G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     bgen_frame.pack(fill="x", padx=40, pady=10)
 
     bgen_item = tk.Label(bgen_frame, text="Massive G generator (10g/s)", font=("Arial", 16))
@@ -543,7 +591,7 @@ def shop():
     bbuy_button.grid(row=2, column=0, pady=10)
 
     # --- Industrial Generator Section ---
-    igen_frame = tk.LabelFrame(shop_window, text="Industrial G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
+    igen_frame = tk.LabelFrame(scroll_frame, text="Industrial G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     igen_frame.pack(fill="x", padx=40, pady=10)
 
     igen_item = tk.Label(igen_frame, text="Industrial G generator (100g/s)", font=("Arial", 16))
@@ -564,7 +612,7 @@ def shop():
     ibuy_button.grid(row=2, column=0, pady=10)
 
     # --- Randomized Generator Section ---
-    randgen_frame = tk.LabelFrame(shop_window, text="Randomized G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
+    randgen_frame = tk.LabelFrame(scroll_frame, text="Randomized G Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     randgen_frame.pack(fill="x", padx=40, pady=10)
 
     randgen_item = tk.Label(randgen_frame, text=f"Randomized G Generator (1-{g_given4}G/s)", font=("Arial", 16))
@@ -575,8 +623,8 @@ def shop():
         shop_window.after(500, update_randgen_item)
 
     update_randgen_item()
-    ishop_amnt = tk.Label(randgen_frame, text=f"amount: {randgen_shop_amnt}", font=("Arial", 16))
-    ishop_amnt.grid(row=0, column=1, padx=20)
+    randgen_shop_amnt_label = tk.Label(randgen_frame, text=f"amount: {randgen_shop_amnt}", font=("Arial", 16))
+    randgen_shop_amnt_label.grid(row=0, column=1, padx=20)
     randgen_current_label = tk.Label(randgen_frame, text=f"Current amount: {len(randgen_list)}", font=("Arial", 16))
     randgen_current_label.grid(row=1, column=0, sticky="w")
     randgen_shop_price_label = tk.Label(randgen_frame, text=f"Price: {randgen_price}G", font=("Arial", 16))
@@ -589,14 +637,13 @@ def shop():
     randbuy_amnt_dec.grid(row=0, column=3)
     randbuy_button = ttk.Button(randgen_frame, text="BUY", command=randbuy)
     randbuy_button.grid(row=2, column=0, pady=10)
-    
 
     # --- Restock Button ---
-    restock_button = ttk.Button(shop_window, text="Restock (100G)", command=restock)
+    restock_button = ttk.Button(scroll_frame, text="Restock (100G)", command=restock)
     restock_button.pack(pady=30)
 
-    close_button = ttk.Button(shop_window, text="Close Shop", command=shop_window.destroy)
-    close_button.place(relx=1.0, rely=0.0, anchor="ne", x=-20, y=20)  # Top right corner with padding
+    close_button = ttk.Button(scroll_frame, text="Close Shop", command=lambda: [sound0.play(), shop_window.destroy()])
+    close_button.pack(pady=10)
 def upgrade_and_stats():
     global gen_lvl, gen_lvl2, gen_lvl3
     def fix_generators(gen_list_to_fix, start_method_name, wrong_labels):
@@ -919,7 +966,7 @@ def upgrade_and_stats():
     randgen_button = ttk.Button(randgen_frame, text=f"UPGRADE ({upgrade_cost4}G)", command=upgrader4)
     randgen_button.grid(row=0, column=1, padx=20)
 
-    close_button = ttk.Button(upgrade_tab, text="Close Window", command=win.destroy)
+    close_button = ttk.Button(upgrade_tab, text="Close Window", command=lambda: [sound0.play(), win.destroy()])
     close_button.place(relx=1.0, rely=0.0, anchor="ne", x=-20, y=20)
 
     # --- Generator Status Tab ---
@@ -964,7 +1011,7 @@ def upgrade_and_stats():
     elec_fix_button = ttk.Button(stats_tab, text="Restart Elec", command=elec_fix)
     elec_fix_button.place(relx=0.7, rely=0.8, anchor="center")
 
-    exit_button = ttk.Button(stats_tab, text="Exit Menu", command=win.destroy)
+    exit_button = ttk.Button(stats_tab, text="Exit Menu", command=lambda: [sound0.play(), win.destroy()])
     exit_button.pack()
 
     # Helper function to get status for a list
@@ -1043,12 +1090,11 @@ def options():
 
     settings_window = tk.Toplevel(root)
     settings_window.geometry("500x400")
-    darktheme_button = ttk.Button(settings_window, text = "Enable Dark Theme (click again to disable)", command = darktheme)
+    darktheme_button = ttk.Button(settings_window, text = "Enable Dark Theme (click again to disable)", command=darktheme)
     darktheme_button.place(relx=0.5, y=50, anchor='center')
     music_button = ttk.Button(settings_window, text="Toggle Music", command=toggle_mus)
     music_button.place(relx=0.5, y=100, anchor='center')
 
-from PIL import Image, ImageTk
 root = tk.Tk()
 root.title("The Game made to Destroy Boredom: The Game")
 root.attributes('-fullscreen', True)
@@ -1082,6 +1128,7 @@ header.pack(pady=(20, 10))
 
 # Function to increase g
 def click():
+    sound0.play()
     global g
     global clickg
     g += clickg
@@ -1143,7 +1190,7 @@ def open_log_window():
     root.after(100, lambda: log_window.deiconify)
 
 # --- LOG BUTTON ---
-log_button = ttk.Button(root, text="View Log", command=open_log_window)
+log_button = ttk.Button(root, text="View Log", command=lambda: [sound0.play(), open_log_window()])
 log_button.place(x=20, y=20)
 
 # G display
@@ -1233,7 +1280,7 @@ stats_button.grid(row=2, column=2, padx=10, pady=10)
 settings_button = ttk.Button(main_frame, text="Settings", command=options)
 settings_button.grid(row=2, column=3, padx=10, pady=10)
 
-quit_button = ttk.Button(main_frame, text="Quit Game", command=root.destroy)
+quit_button = ttk.Button(main_frame, text="Quit Game", command=lambda: [sound0.play(), root.destroy()])
 quit_button.grid(row=3, column=2, padx=10, pady=10)
 
 # Exp labels and stuff
@@ -1480,10 +1527,10 @@ def load_game():
 # Save/Load
 save_frame = ttk.Frame(root)
 
-save_button = ttk.Button(save_frame, text="Save", command=save_game)
+save_button = ttk.Button(save_frame, text="Save", command=lambda: [sound0.play(), save_game()])
 save_button.grid(row=0, column=0, padx=5)
 
-load_button = ttk.Button(save_frame, text="Load", command=load_game)
+load_button = ttk.Button(save_frame, text="Load", command=lambda: [sound0.play(), load_game()])
 load_button.grid(row=0, column=1, padx=5)
 
 save_label = tk.Label(save_frame, text="", font=("Cascadia Code", 11))
