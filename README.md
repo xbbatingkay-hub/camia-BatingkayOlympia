@@ -67,9 +67,9 @@ Click on "Executable files for this game" and download whichever version you wan
 
 
 
-# Current Features (as of v0.3.1):
+# Current Features (as of v0.3.1) (mini update):
 
-Shop GUI
+Scrollable Shop GUI
 
 Upgrade and Enhance GUI
 
