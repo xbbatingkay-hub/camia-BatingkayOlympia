@@ -5,13 +5,13 @@ MONOCLICKER
 MONOCLICKER (MC)
 
 
-Project Description:
+ # Project Description:
 
  - A game aimed to destroy boredom, made to be a timekiller but not too addictive.
 
 
 
-Features:
+# Features:
 
 - Visible GUI
 
