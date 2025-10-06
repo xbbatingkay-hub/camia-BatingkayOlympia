@@ -30,7 +30,7 @@ MONOCLICKER (MC)
 
 
 
- Gameplay:
+# Gameplay:
 
 
 
