@@ -1,21 +1,32 @@
-# THE GAME MADE TO DESTROY BOREDOM: THE GAME
+# MONOCLICKER
 
-THE GAME MADE TO DESTROY BOREDOM: THE GAME
+MONOCLICKER
 
-The Game Made to Destroy Boredom: The Game (GMDB:TG)
+MONOCLICKER (MC)
+
+
+Project Description:
+
+ - A game aimed to destroy boredom, made to be a timekiller but not too addictive.
+
+
+
+Features:
+
+- Visible GUI
+
+- Simple Gameplay
+
+- Fun Minigames
+
+- Eastereggs
+
+  
+
+
 
 
  
-
-This project aims to solve the problem of boredom, with minimalist graphics, sound effects, and minigames. A frustrating, interactive, but not addictive game experience, based on Silicon Valley Capitalism. This is a great way to kill time when you are bored.
-
-
-
-The Game includes basic animations and graphics with background design and character sprites to be made. This Project can and will be finished as we have finished most of the game.
-
-
-
-My partner and the main programmer is Bastijn Batingkay. I am currently working on the sprite art and animations. Currently, a Mobile Port is being worked on. The Game features a sleek GUI, new minigames, fun pro-tips, a Leveling System and planned to feature a background in 4 phases and a Character with Animations in 3 phases.
 
 
 
