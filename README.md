@@ -13,13 +13,19 @@ MONOCLICKER (MC)
 
 # Features:
 
-- Visible GUI
+- Clickable button to increase a number (the user's G)
 
-- Simple Gameplay
+- Generators that the user can purchase with G to increase G output and can be accessed via the "Shop" button.
 
-- Fun Minigames
+- Slight chance for generators to break down, and requires a "minigame" using a consistent stream of user input in a limited amount of time to "fix" the generator
 
-- Eastereggs
+- Tips at the bottom of the main menu to push along progress and give the user hints as to what to do
+
+- A timer that is put at the top of the screen that takes roughly 25% of the user's current G to slow down progress.
+
+- An automatic save system that uses JSON files to store data, such as generator amounts, inflated prices, and the user's G.
+
+- A menu used to upgrade and fix generators, accessed via the "Generator Status" button. 
 
   
 
@@ -30,23 +36,23 @@ MONOCLICKER (MC)
 
 
 
-# Gameplay:
+# Gameplay/How to Run the Program:
 
 
 
-- Click the G Button to gain G (Thats money!)
+- Click the button labeled "Increase G" to increase G
 
 
 
-- Buy generators to generate more G, but watch out for inflation.
+- Buy generators by clicking the "Shop" button and purchasing some to generate more G, but prices increase by 15% after every purchase.
 
 
 
-- Fix and Check your generators status!
+- Click on the "Generator Status" Button to monitor the status of generators and upgrade the G output of different tiers of generators.
 
 
 
-- Pay your taxes
+- Generate as much G as possible to minimize losses when the timer runs out.
 
 # How to Play/Run
 
@@ -61,53 +67,21 @@ pip install sv_ttk
 
 pip install pygame
 
-If these commands don't work, you probably forgot to check a box
+If these commands don't work, you probably forgot to check a box and may need to reinstall Python.
 
-4. Open the python file (keep it inside its folder)
-
-
-If you dont wanna do all that...
+4. Open the Python file (keep it inside its folder).
 
 
-Download the executable files here:
+
+You can also download the executable files here:
 https://drive.google.com/drive/folders/1KrGCQRprnQmGtiIFKEZA8G78wadhtLxC
 
 
-Click on "Executable files for this game" and download whichever version you want
-(Note: for V0.3.1+, you need to keep the .exe file in its folder for it to function)
+Click on "Executable files for this game" and download whichever version you want.
+(Note: for V0.3.1+, you need to keep the .exe file in its folder for it to function.)
 
 
 
-# Current Features (as of v0.3.1) (mini update):
-
-Scrollable Shop GUI
-
-Upgrade and Enhance GUI
-
-Simple settings GUI (darkmode, toggle music)
-
-Save System (with JSON Files)
-
-
-Fixes:
-
-GUI overhaul
-Electricity Rework
-(used to be an annoying loading screen but is now a cool minigame)
-
-
-New Additions: 
-
-Randomized Generators: give 0-max amount of G per second (very random and unbalanced)
-
-New Game Title! (yayyyy :))
-
-
-In development:
-
-More fixes
-More content
-Backgrounds
 
 # Example Output
 
@@ -127,8 +101,8 @@ Backgrounds
 
 ## Contributors
 
-- Student1: Bastijn Batingkay: Programmer, Inputs and Head Developer
-- Student2: Jibrael Olympia: Graphics, Character and Background Artist, Game Tester
+- Student1: Bastijn Batingkay (User interface, general function of the program)
+- Student2: Jibrael Olympia: (Graphics, game tester)
 
 
 
