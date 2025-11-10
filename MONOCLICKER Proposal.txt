@@ -1,0 +1,38 @@
+# MONOCLICKER
+
+MONOCLICKER
+
+MONOCLICKER (MC)
+
+
+ # Problem Statement:
+ - Most people are bored, but often turn to solutions that leave a negative impact on them (like doomscrolling).
+
+ # Objectives:
+ - Create a clean simulation experience for players to enjoy without too many unnecessary features.
+ - Destroy boredom and be a timekiller that isnt too addictive.
+
+ # Project Description:
+
+ - A game aimed to destroy boredom, made to be a timekiller but not too addictive.
+ - Also made to spite games in the same genre that experience common problems such as feature bloat.
+
+
+
+# Planned Features:
+
+- Clickable button to increase a number (the user's G)
+
+- Generators that the user can purchase with G to increase G output and can be accessed via the "Shop" button.
+
+- Slight chance for generators to break down, and requires a "minigame" using a consistent stream of user input in a limited amount of time to "fix" the generator
+
+- Tips at the bottom of the main menu to push along progress and give the user hints as to what to do
+
+- A timer that is put at the top of the screen that takes roughly 25% of the user's current G to slow down progress.
+
+- An automatic save system that uses JSON files to store data, such as generator amounts, inflated prices, and the user's G.
+
+- A menu used to upgrade and fix generators, accessed via the "Generator Status" button. 
+
+
