@@ -5,9 +5,17 @@ MONOCLICKER
 MONOCLICKER (MC)
 
 
+ # Problem Statement:
+ - Most people are bored, but often turn to solutions that leave a negative impact on them (like doomscrolling).
+
+ # Objectives:
+ - Create a clean simulation experience for players to enjoy without too many unnecessary features.
+ - Destroy boredom and be a timekiller that isnt too addictive.
+
  # Project Description:
 
  - A game aimed to destroy boredom, made to be a timekiller but not too addictive.
+ - Also made to spite games in the same genre that experience common problems such as feature bloat.
 
 
 
