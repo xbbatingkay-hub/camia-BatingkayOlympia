@@ -35,4 +35,197 @@ MONOCLICKER (MC)
 
 - A menu used to upgrade and fix generators, accessed via the "Generator Status" button. 
 
+# Planned Inputs and Outputs:
 
+- User opens program and loads into menu
+- Menu contains buttons that include a button to earn in-game currency in "g", a button to go to the shop in order to buy generators, and a status button that opens to check on the status of their generators and electricity and upgrade generators, as well as a timer at the top to indicate the time left before a percentage of their g is taken away forcefully.
+- Generators are essentially objects that increase the user's "g" by an amount.
+- Sometimes, generators will receive a tag that makes it stop producing g, forcing the user to "fix" generators by playing a minigame in the status menu.
+- Electricity is a mechanic that disables ALL generators when it receives a tag to make it False.
+- When reactivating electricity, the user has to a play another minigame, similar to fixing generators, but they have to play a memory game to restore it.
+- This all happens simultaneously every "tick", 1/20th of a second that the game takes to perform every single action in that time.
+
+# Logic Plan in Pseudocode
+
+MAIN PROGRAM:
+    LOAD saved_data.json
+    INITIALIZE user_G, generators, electricity_status, timer, upgrades
+    CALL main_menu()
+
+MAIN MENU LOOP
+FUNCTION main_menu():
+    WHILE True:
+        CLEAR screen
+        DISPLAY "Current G: ", user_G
+        DISPLAY "Timer: ", timer.remaining_time
+        DISPLAY "Tips: ", random_tip()
+        
+        DISPLAY BUTTONS:
+            [1] Earn G
+            [2] Shop
+            [3] Generator Status
+            [4] Exit Game
+
+        EVERY 1/20 second (TICK):
+            CALL tick_update()
+
+        IF button [1] clicked:
+            CALL earn_G()
+
+        IF button [2] clicked:
+            CALL open_shop()
+
+        IF button [3] clicked:
+            CALL generator_status_menu()
+
+        IF button [4] clicked:
+            CALL save_game()
+            EXIT program
+
+GAME LOOP ACTIONS
+FUNCTION tick_update():
+    IF electricity_status == True:
+        FOR each generator in generators:
+            IF generator.broken == False:
+                user_G += generator.output_rate / 20
+            ELSE:
+                CONTINUE  # Skip broken generators
+    ELSE:
+        DISPLAY "Electricity Down! Fix to resume power!"
+
+    # Timer countdown
+    timer.remaining_time -= 1/20 second
+    IF timer.remaining_time <= 0:
+        user_G -= user_G * 0.25
+        RESET timer.remaining_time to default value
+
+    # Random chance for generator breakdown
+    FOR each generator in generators:
+        IF random_chance(0.001):  # 0.1% chance per tick
+            generator.broken = True
+EARNING G MANUALLY
+FUNCTION earn_G():
+    user_G += 1
+    DISPLAY "+1 G"
+
+SHOP MENU
+FUNCTION open_shop():
+    WHILE True:
+        CLEAR screen
+        DISPLAY all available generators:
+            FOR each generator_type:
+                DISPLAY name, cost, output_rate, count_owned
+
+        DISPLAY "[B] Buy Generator | [E] Exit"
+
+        INPUT choice
+
+        IF choice == "B":
+            ASK which generator to buy
+            IF user_G >= generator.cost:
+                user_G -= generator.cost
+                generator.count_owned += 1
+                INCREASE generator.cost by inflation_rate
+            ELSE:
+                DISPLAY "Not enough G!"
+
+        IF choice == "E":
+            BREAK
+
+GENERATOR STATUS MENU
+FUNCTION generator_status_menu():
+    WHILE True:
+        CLEAR screen
+        DISPLAY each generator:
+            name, output_rate, broken_status, upgrade_level
+
+        DISPLAY BUTTONS:
+            [1] Fix Generator
+            [2] Upgrade Generator
+            [3] Fix Electricity
+            [4] Exit
+
+        INPUT choice
+
+        IF choice == 1:
+            ASK which generator to fix
+            IF generator.broken == True:
+                CALL fix_minigame(generator)
+            ELSE:
+                DISPLAY "That generator is already working!"
+
+        IF choice == 2:
+            ASK which generator to upgrade
+            IF user_G >= generator.upgrade_cost:
+                user_G -= generator.upgrade_cost
+                generator.output_rate *= 1.2
+                generator.upgrade_level += 1
+                generator.upgrade_cost *= 1.5
+
+        IF choice == 3:
+            IF electricity_status == False:
+                CALL electricity_memory_game()
+            ELSE:
+                DISPLAY "Electricity is already active!"
+
+        IF choice == 4:
+            BREAK
+
+MINIGAMES
+FUNCTION fix_minigame(generator):
+    DISPLAY "Fixing generator... Type the shown letters quickly!"
+
+    SET timer = 5 seconds
+    WHILE timer > 0:
+        DISPLAY random letter
+        WAIT for user input
+        IF user input matches:
+            CONTINUE
+        ELSE:
+            DISPLAY "Failed! Try again."
+            RETURN
+
+    DISPLAY "Generator fixed!"
+    generator.broken = False
+FUNCTION electricity_memory_game():
+    DISPLAY "Memory Restore Game!"
+
+    GENERATE sequence of 5 random letters
+    DISPLAY them for 3 seconds
+    CLEAR screen
+    ASK user to type the sequence
+
+    IF correct:
+        DISPLAY "Electricity Restored!"
+        electricity_status = True
+    ELSE:
+        DISPLAY "Failed! Try again later."
+
+SAVE AND LOAD SYSTEM
+FUNCTION save_game():
+    data = {
+        "user_G": user_G,
+        "generators": list of generator states,
+        "electricity_status": electricity_status,
+        "timer": timer.remaining_time
+    }
+    WRITE data TO "saved_data.json"
+
+FUNCTION load_game():
+    IF "saved_data.json" exists:
+        READ data
+        user_G = data["user_G"]
+        generators = data["generators"]
+        electricity_status = data["electricity_status"]
+        timer.remaining_time = data["timer"]
+    ELSE:
+        INITIALIZE default values
+TIPS SYSTEM
+FUNCTION random_tip():
+    tips = [
+        "Click the G button to earn G!",
+        "Buy generators to automate G generation.",
+        "Keep an eye on your generators — they can break!",
+        "Don’t forget to restore power when it goes out."
+    ]
+    RETURN random choice from tips
