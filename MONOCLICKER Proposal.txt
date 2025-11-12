@@ -229,3 +229,6 @@ FUNCTION random_tip():
         "Don’t forget to restore power when it goes out."
     ]
     RETURN random choice from tips
+
+Github Link:
+https://github.com/xbbatingkay-hub/camia-BatingkayOlympia
