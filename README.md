@@ -20,7 +20,6 @@ MONOCLICKER (MC)
 
 
 # Features:
-
 - Clickable button to increase a number (the user's G)
 
 - Generators that the user can purchase with G to increase G output and can be accessed via the "Shop" button.
@@ -75,6 +74,7 @@ If using the raw Python file...
 3. Open the module_installer.py file in the game folder and let it install the packages needed (if you need to give it permissions, please do so)
 4. Open the Python file (keep it inside its folder).
 
+(Warning: If you don't hear anything, its because you didnt activate the music player in the settings)
 
 
 
