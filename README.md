@@ -30,7 +30,7 @@ MONOCLICKER (MC)
 
 - A timer that is put at the top of the screen that takes roughly 25% of the user's current G to slow down progress.
 
-- An automatic save system that uses JSON files to store data, such as generator amounts, inflated prices, and the user's G.
+- A manual save system that uses JSON files to store data, such as generator amounts, inflated prices, and the user's G.
 
 - A menu used to upgrade and fix generators, accessed via the "Generator Status" button.
 
