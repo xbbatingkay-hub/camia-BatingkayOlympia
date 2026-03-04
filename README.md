@@ -10,12 +10,12 @@ MONOCLICKER (MC)
 
  # Objectives:
  - Create a clean simulation experience for players to enjoy without too many unnecessary features.
- - Destroy boredom and be a timekiller that isnt too addictive.
+ - Destroy boredom and be a timekiller that isn't too addictive.
 
  # Project Description:
 
  - A game aimed to destroy boredom, made to be a timekiller but not too addictive.
- - Also made to spite games in the same genre that experience common problems such as feature bloat.
+ - Also made to spite games in the same genre that experience common problems, such as feature bloat.
 
 
 
@@ -33,7 +33,11 @@ MONOCLICKER (MC)
 
 - An automatic save system that uses JSON files to store data, such as generator amounts, inflated prices, and the user's G.
 
-- A menu used to upgrade and fix generators, accessed via the "Generator Status" button. 
+- A menu used to upgrade and fix generators, accessed via the "Generator Status" button.
+
+- A music player you can put the music you want in!
+
+- Rotating upgrades on the right, and your player stats on the left
 
   
 
@@ -68,35 +72,28 @@ If using the raw Python file...
 
 1. Install Python
 2. In the selection screen, check all the boxes
-3. Open your command prompt
-3A. Type these commands:
-
-pip install sv_ttk
-
-pip install pygame
-
-If these commands don't work, you probably forgot to check a box and may need to reinstall Python.
-
+3. Open the module_installer.py file in the game folder and let it install the packages needed (if you need to give it permissions, please do so)
 4. Open the Python file (keep it inside its folder).
 
-
-
-You can also download the executable files here:
-https://drive.google.com/drive/folders/1KrGCQRprnQmGtiIFKEZA8G78wadhtLxC
-
-
-Click on "Executable files for this game" and download whichever version you want.
-(Note: for V0.3.1+, you need to keep the .exe file in its folder for it to function.)
 
 
 
 
 # Example Output
 
+Main menu:
+<img width="2559" height="1438" alt="Screenshot 2026-03-04 184347" src="https://github.com/user-attachments/assets/62aba664-b3aa-4022-88e2-a51e0cf906c4" />
 
+Shop menu:
+<img width="2559" height="1433" alt="Screenshot 2026-03-04 184350" src="https://github.com/user-attachments/assets/44b8af50-acd0-4e0f-a46b-449f7d4bac45" />
 
-<img width="1920" height="979" alt="Screenshot (2)" src="https://github.com/user-attachments/assets/c3e420fb-3981-464f-9ab8-2a53557d94b0" />
+Upgrade and Status Menu
+<img width="2559" height="1438" alt="Screenshot 2026-03-04 184353" src="https://github.com/user-attachments/assets/c6881db6-c083-4073-a706-3910c6d1c36e" />
+<img width="2559" height="1439" alt="Screenshot 2026-03-04 184358" src="https://github.com/user-attachments/assets/0bda8008-9c62-47b1-8d95-49ea64b54d57" />
 
+Settings: 
+
+<img width="510" height="443" alt="Screenshot 2026-03-04 184403" src="https://github.com/user-attachments/assets/4706fb35-5e75-4ef3-a8a6-a21b04c07f5a" />
 
 
 
