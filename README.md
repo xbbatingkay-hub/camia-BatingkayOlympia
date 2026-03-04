@@ -74,7 +74,17 @@ If using the raw Python file...
 3. Open the module_installer.py file in the game folder and let it install the packages needed (if you need to give it permissions, please do so)
 4. Open the Python file (keep it inside its folder).
 
-(Warning: If you don't hear anything, its because you didnt activate the music player in the settings)
+Gameplay
+
+
+- Click the button for money and gain levels
+- Buy generators
+- Use levels to upgrade your generators
+- Use the cool music player for music
+- Get annoyed by randomly appearing but somewhat unobtrusive pop-ups
+- Watch as your money gain gets increasingly ridiculous
+- Suffer the pain of taxes
+(Warning: If you don't hear anything, it's because you didn't activate the music player in the settings)
 
 
 
