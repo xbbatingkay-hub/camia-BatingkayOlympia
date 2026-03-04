@@ -6,7 +6,6 @@ import sv_ttk  # For modern theme
 import random
 import json
 import os
-import music
 import pygame
 import time
 from datetime import datetime, timedelta
@@ -25,6 +24,7 @@ current_rotation_index = 0
 
 # Define possible rotating upgrades
 rotating_upgrades = [
+    {"name": "Music Player Unlock", "cost": 5000, "effect": "Unlock the custom music player feature", "duration": 0},
     {"name": "Click Multiplier x2", "cost": 500, "effect": "Double click power for 5 minutes", "duration": 300},
     {"name": "Generator Boost", "cost": 1000, "effect": "All generators produce 2x for 3 minutes", "duration": 180},
     {"name": "Tax Immunity", "cost": 2500, "effect": "Skip next tax collection", "duration": 0},
@@ -39,6 +39,7 @@ active_upgrades = []
 # Guide for adding new items: set variables → add to shop() → add to upgrade() → add to gen_stats()
 # Music toggle
 mus = True
+music_player_unlocked = False  # Player must unlock this upgrade first
 # Game state variables
 g = 0  # Player's gold
 clickg = 1  # Gold per click
@@ -83,7 +84,7 @@ ngen_amnt = 0
 ngen_list = []
 g_given5 = 500
 gen_lvl5 = 1
-upgrade_cost5 = 5000
+upgrade_cost5 = 50
 ngen_stock = 3
 # quantum generators
 qgen_price = 2500
@@ -92,7 +93,7 @@ qgen_amnt = 0
 qgen_list = []
 g_given6 = 2000
 gen_lvl6 = 1
-upgrade_cost6 = 25000
+upgrade_cost6 = 100
 qgen_stock = 2
 # fusion generators
 fgen_price = 15000
@@ -101,7 +102,7 @@ fgen_amnt = 0
 fgen_list = []
 g_given7 = 10000
 gen_lvl7 = 1
-upgrade_cost7 = 150000
+upgrade_cost7 = 200
 fgen_stock = 1
 # Stock variables for each generator type
 gen_stock = 15
@@ -111,6 +112,14 @@ randgen_stock = 7
 ngen_stock = 3
 qgen_stock = 2
 fgen_stock = 1
+
+# Other upgrade costs
+# Why the big jump? Cuz i love making games hard
+upgrade_cost8 = 250
+upgrade_cost9 = 400 
+upgrade_cost10 = 450
+upgrade_cost11 = 300
+# Theres so much code, i forgot where these leads to but im just following my original scaling
 # Dark theme toggle counter
 click2 = 0
 fixeth = 20  # Clicks to repair a generator
@@ -822,10 +831,8 @@ def shop():
     plasma_frame = tk.LabelFrame(scrollable_frame, text="Plasma Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     plasma_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-    plasma_item = tk.Label(plasma_frame, text="Plasma Generator (2500G/s) - High Output!", font=("Arial", 16))
+    plasma_item = tk.Label(plasma_frame, text="Plasma Generator (2500G/s)", font=("Arial", 16))
     plasma_item.grid(row=0, column=0, sticky="w")
-    plasmainfo_label = tk.Label(plasma_frame, text="Fix mechanic: Plasma Stream Calibration", font=("Arial", 12), fg="blue")
-    plasmainfo_label.grid(row=1, column=0, sticky="w")
     plasma_shop_amnt_label = tk.Label(plasma_frame, text=f"Current amount: {len(plasma_list)}", font=("Arial", 16))
     plasma_shop_amnt_label.grid(row=2, column=0, sticky="w")
     plasma_shop_price_label = tk.Label(plasma_frame, text=f"Price: {format(plasma_price)}G", font=("Arial", 16))
@@ -855,9 +862,9 @@ def shop():
     steam_frame = tk.LabelFrame(scrollable_frame, text="Steam Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     steam_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-    steam_item = tk.Label(steam_frame, text="Steam Generator (500G/s) - Breaks Easily!", font=("Arial", 16))
+    steam_item = tk.Label(steam_frame, text="Steam Generator (500G/s)", font=("Arial", 16))
     steam_item.grid(row=0, column=0, sticky="w")
-    steaminfo_label = tk.Label(steam_frame, text="WARNING: High break chance (25%)", font=("Arial", 12), fg="red")
+    steaminfo_label = tk.Label(steam_frame, text="High break chance (25%)", font=("Arial", 12), fg="red")
     steaminfo_label.grid(row=1, column=0, sticky="w")
     steam_shop_amnt_label = tk.Label(steam_frame, text=f"Current amount: {len(steam_list)}", font=("Arial", 16))
     steam_shop_amnt_label.grid(row=2, column=0, sticky="w")
@@ -888,10 +895,8 @@ def shop():
     void_frame = tk.LabelFrame(scrollable_frame, text="Void Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     void_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-    void_item = tk.Label(void_frame, text="Void Generator (10000G/s) - Extreme Output!", font=("Arial", 16))
+    void_item = tk.Label(void_frame, text="Void Generator (10000G/s) (Hard to fix)", font=("Arial", 16))
     void_item.grid(row=0, column=0, sticky="w")
-    voidinfo_label = tk.Label(void_frame, text="Fix mechanic: Void Connection (Hold SPACE in green zone)", font=("Arial", 12), fg="purple")
-    voidinfo_label.grid(row=1, column=0, sticky="w")
     void_shop_amnt_label = tk.Label(void_frame, text=f"Current amount: {len(void_list)}", font=("Arial", 16))
     void_shop_amnt_label.grid(row=2, column=0, sticky="w")
     void_shop_price_label = tk.Label(void_frame, text=f"Price: {format(void_price)}G", font=("Arial", 16))
@@ -921,10 +926,8 @@ def shop():
     chronos_frame = tk.LabelFrame(scrollable_frame, text="Chronos Generator", font=("Arial", 18, "bold"), padx=20, pady=10)
     chronos_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-    chronos_item = tk.Label(chronos_frame, text="Chronos Generator (50000G/s) - ULTIMATE!", font=("Arial", 16))
+    chronos_item = tk.Label(chronos_frame, text="Chronos Generator (50000G/s)", font=("Arial", 16))
     chronos_item.grid(row=0, column=0, sticky="w")
-    chronosinfo_label = tk.Label(chronos_frame, text="Fix mechanic: Time Dilution Puzzle", font=("Arial", 12), fg="dark blue")
-    chronosinfo_label.grid(row=1, column=0, sticky="w")
     chronos_shop_amnt_label = tk.Label(chronos_frame, text=f"Current amount: {len(chronos_list)}", font=("Arial", 16))
     chronos_shop_amnt_label.grid(row=2, column=0, sticky="w")
     chronos_shop_price_label = tk.Label(chronos_frame, text=f"Price: {format(chronos_price)}G", font=("Arial", 16))
@@ -1096,6 +1099,24 @@ def upgrade_and_stats():
             text="^",
             font=("Arial", 12)
         ).pack(anchor="center", pady=(0, 10))  # Small gap only
+
+    # --- Advanced Generator Fix Functions ---
+    def plasma_fix_wrapper():
+        # Import the plasma fix function from advanced_generators
+        from advanced_generators import plasma_fix
+        plasma_fix(plasma_list)
+    
+    def steam_fix_wrapper():
+        from advanced_generators import steam_fix_minigame
+        steam_fix_minigame(steam_list)
+    
+    def void_fix_wrapper():
+        from advanced_generators import void_fix
+        void_fix(void_list)
+    
+    def chronos_fix_wrapper():
+        from advanced_generators import chronos_fix
+        chronos_fix(chronos_list)
 
 
         def update_timer():
@@ -1330,6 +1351,126 @@ def upgrade_and_stats():
     randgen_button = ttk.Button(randgen_frame, text=f"UPGRADE (5 Levels)", command=upgrader4)
     randgen_button.grid(row=0, column=1, padx=20)
 
+    # --- Advanced Generator Upgrades ---
+    
+    # Plasma Generator Upgrade
+    plasma_upgr_frame = tk.LabelFrame(upgrade_tab, text="Plasma Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    plasma_upgr_frame.pack(fill="x", padx=40, pady=10)
+    plasma_upgr_label = tk.Label(plasma_upgr_frame, text=f"Level: {gen_lvl8}", font=("Arial", 16))
+    plasma_upgr_label.grid(row=0, column=0, sticky="w")
+    def upgrader_plasma():
+        global gen_lvl8, upgrade_cost8, g_given8, level
+        # consume player levels instead of gold
+        if level >= upgrade_cost8:
+            level -= upgrade_cost8
+            # refresh the main level label with tier suffix
+            if level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 75:
+                level_label.config(text=f"Level: {level} (III)")
+            elif level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
+            else:
+                level_label.config(text=f"Level: {level}")
+            gen_lvl8 += 1
+            upgrade_cost8 = int(upgrade_cost8 * 1.5)
+            g_given8 = int(g_given8 * 1.35)
+            plasma_upgr_label.config(text=f"Level: {gen_lvl8}")
+            plasma_upgr_button.config(text=f"UPGRADE ({upgrade_cost8} Levels)")
+        else:
+            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost8} levels to upgrade!")
+    plasma_upgr_button = ttk.Button(plasma_upgr_frame, text=f"UPGRADE ({upgrade_cost8} Levels)", command=upgrader_plasma)
+    plasma_upgr_button.grid(row=0, column=1, padx=20)
+
+    # Steam Generator Upgrade
+    steam_upgr_frame = tk.LabelFrame(upgrade_tab, text="Steam Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    steam_upgr_frame.pack(fill="x", padx=40, pady=10)
+    steam_upgr_label = tk.Label(steam_upgr_frame, text=f"Level: {gen_lvl11}", font=("Arial", 16))
+    steam_upgr_label.grid(row=0, column=0, sticky="w")
+    def upgrader_steam():
+        global gen_lvl11, upgrade_cost11, g_given11, level
+        if level >= upgrade_cost11:
+            level -= upgrade_cost11
+            if level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 75:
+                level_label.config(text=f"Level: {level} (III)")
+            elif level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
+            else:
+                level_label.config(text=f"Level: {level}")
+            gen_lvl11 += 1
+            upgrade_cost11 = int(upgrade_cost11 * 1.5)
+            g_given11 = int(g_given11 * 1.25)
+            steam_upgr_label.config(text=f"Level: {gen_lvl11}")
+            steam_upgr_button.config(text=f"UPGRADE ({upgrade_cost11} Levels)")
+        else:
+            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost11} levels to upgrade!")
+    steam_upgr_button = ttk.Button(steam_upgr_frame, text=f"UPGRADE ({upgrade_cost11} Levels)", command=upgrader_steam)
+    steam_upgr_button.grid(row=0, column=1, padx=20)
+
+    # Void Generator Upgrade
+    void_upgr_frame = tk.LabelFrame(upgrade_tab, text="Void Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    void_upgr_frame.pack(fill="x", padx=40, pady=10)
+    void_upgr_label = tk.Label(void_upgr_frame, text=f"Level: {gen_lvl9}", font=("Arial", 16))
+    void_upgr_label.grid(row=0, column=0, sticky="w")
+    def upgrader_void():
+        global gen_lvl9, upgrade_cost9, g_given9, level
+        if level >= upgrade_cost9:
+            level -= upgrade_cost9
+            if level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 75:
+                level_label.config(text=f"Level: {level} (III)")
+            elif level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
+            else:
+                level_label.config(text=f"Level: {level}")
+            gen_lvl9 += 1
+            upgrade_cost9 = int(upgrade_cost9 * 1.5)
+            g_given9 = int(g_given9 * 1.4)
+            void_upgr_label.config(text=f"Level: {gen_lvl9}")
+            void_upgr_button.config(text=f"UPGRADE ({upgrade_cost9} Levels)")
+        else:
+            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost9} levels to upgrade!")
+    void_upgr_button = ttk.Button(void_upgr_frame, text=f"UPGRADE ({upgrade_cost9} Levels)", command=upgrader_void)
+    void_upgr_button.grid(row=0, column=1, padx=20)
+
+    # Chronos Generator Upgrade
+    chronos_upgr_frame = tk.LabelFrame(upgrade_tab, text="Chronos Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    chronos_upgr_frame.pack(fill="x", padx=40, pady=10)
+    chronos_upgr_label = tk.Label(chronos_upgr_frame, text=f"Level: {gen_lvl10}", font=("Arial", 16))
+    chronos_upgr_label.grid(row=0, column=0, sticky="w")
+    def upgrader_chronos():
+        global gen_lvl10, upgrade_cost10, g_given10, level
+        if level >= upgrade_cost10:
+            level -= upgrade_cost10
+            if level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 75:
+                level_label.config(text=f"Level: {level} (III)")
+            elif level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
+            else:
+                level_label.config(text=f"Level: {level}")
+            gen_lvl10 += 1
+            upgrade_cost10 = int(upgrade_cost10 * 1.5)
+            g_given10 = int(g_given10 * 1.45)
+            chronos_upgr_label.config(text=f"Level: {gen_lvl10}")
+            chronos_upgr_button.config(text=f"UPGRADE ({upgrade_cost10} Levels)")
+        else:
+            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost10} levels to upgrade!")
+    chronos_upgr_button = ttk.Button(chronos_upgr_frame, text=f"UPGRADE ({upgrade_cost10} Levels)", command=upgrader_chronos)
+    chronos_upgr_button.grid(row=0, column=1, padx=20)
+
     close_button = ttk.Button(upgrade_tab, text="Close Window", command=win.destroy)
     close_button.place(relx=1.0, rely=0.0, anchor="ne", x=-20, y=20)
 
@@ -1462,6 +1603,129 @@ def upgrade_and_stats():
     )
     gen_status4_label.grid(row=1, column=0, columnspan=2, sticky="w", pady=(5, 0))
 
+    # --- Plasma Generator Status ---
+    plasma_status_frame = tk.LabelFrame(
+        stats_tab,
+        text="Plasma Generator",
+        font=("Arial", 14, "bold"),
+        padx=20,
+        pady=10
+    )
+    plasma_status_frame.pack(fill="x", padx=40, pady=10)
+
+    plasma_gen_stats = tk.Label(
+        plasma_status_frame,
+        text=f"Produces {g_given8}/s",
+        font=("Arial", 16)
+    )
+    plasma_gen_stats.grid(row=0, column=0, sticky="w")
+
+    plasma_fix_button = ttk.Button(
+        plasma_status_frame,
+        text="fix gens",
+        command=plasma_fix_wrapper
+    )
+    plasma_fix_button.grid(row=0, column=1, padx=20)
+
+    plasma_status_label = tk.Label(
+        plasma_status_frame,
+        text="",
+        font=("Arial", 13)
+    )
+    plasma_status_label.grid(row=1, column=0, columnspan=2, sticky="w", pady=(5, 0))
+
+    # --- Steam Generator Status ---
+    steam_status_frame = tk.LabelFrame(
+        stats_tab,
+        text="Steam Generator",
+        font=("Arial", 14, "bold"),
+        padx=20,
+        pady=10
+    )
+    steam_status_frame.pack(fill="x", padx=40, pady=10)
+
+    steam_gen_stats = tk.Label(
+        steam_status_frame,
+        text=f"Produces {g_given11}/s",
+        font=("Arial", 16)
+    )
+    steam_gen_stats.grid(row=0, column=0, sticky="w")
+
+    steam_fix_button = ttk.Button(
+        steam_status_frame,
+        text="fix gens",
+        command=steam_fix_wrapper
+    )
+    steam_fix_button.grid(row=0, column=1, padx=20)
+
+    steam_status_label = tk.Label(
+        steam_status_frame,
+        text="",
+        font=("Arial", 13)
+    )
+    steam_status_label.grid(row=1, column=0, columnspan=2, sticky="w", pady=(5, 0))
+
+    # --- Void Generator Status ---
+    void_status_frame = tk.LabelFrame(
+        stats_tab,
+        text="Void Generator",
+        font=("Arial", 14, "bold"),
+        padx=20,
+        pady=10
+    )
+    void_status_frame.pack(fill="x", padx=40, pady=10)
+
+    void_gen_stats = tk.Label(
+        void_status_frame,
+        text=f"Produces {g_given9}/s",
+        font=("Arial", 16)
+    )
+    void_gen_stats.grid(row=0, column=0, sticky="w")
+
+    void_fix_button = ttk.Button(
+        void_status_frame,
+        text="fix gens",
+        command=void_fix_wrapper
+    )
+    void_fix_button.grid(row=0, column=1, padx=20)
+
+    void_status_label = tk.Label(
+        void_status_frame,
+        text="",
+        font=("Arial", 13)
+    )
+    void_status_label.grid(row=1, column=0, columnspan=2, sticky="w", pady=(5, 0))
+
+    # --- Chronos Generator Status ---
+    chronos_status_frame = tk.LabelFrame(
+        stats_tab,
+        text="Chronos Generator",
+        font=("Arial", 14, "bold"),
+        padx=20,
+        pady=10
+    )
+    chronos_status_frame.pack(fill="x", padx=40, pady=10)
+
+    chronos_gen_stats = tk.Label(
+        chronos_status_frame,
+        text=f"Produces {g_given10}/s",
+        font=("Arial", 16)
+    )
+    chronos_gen_stats.grid(row=0, column=0, sticky="w")
+
+    chronos_fix_button = ttk.Button(
+        chronos_status_frame,
+        text="fix gens",
+        command=chronos_fix_wrapper
+    )
+    chronos_fix_button.grid(row=0, column=1, padx=20)
+
+    chronos_status_label = tk.Label(
+        chronos_status_frame,
+        text="",
+        font=("Arial", 13)
+    )
+    chronos_status_label.grid(row=1, column=0, columnspan=2, sticky="w", pady=(5, 0))
 
     # Electricity Status
     elec_status_frame = tk.LabelFrame(
@@ -1512,6 +1776,16 @@ def upgrade_and_stats():
         gen_status2_label.config(text=get_gen_status(bgen_list))
         gen_status3_label.config(text=get_gen_status(igen_list))
         gen_status4_label.config(text=get_gen_status(randgen_list))
+        
+        # Update advanced generator statuses
+        plasma_gen_stats.config(text=f"Plasma Generator\nProduces {g_given8}/s")
+        plasma_status_label.config(text=get_gen_status(plasma_list))
+        steam_gen_stats.config(text=f"Steam Generator\nProduces {g_given11}/s")
+        steam_status_label.config(text=get_gen_status(steam_list))
+        void_gen_stats.config(text=f"Void Generator\nProduces {g_given9}/s")
+        void_status_label.config(text=get_gen_status(void_list))
+        chronos_gen_stats.config(text=f"Chronos Generator\nProduces {g_given10}/s")
+        chronos_status_label.config(text=get_gen_status(chronos_list))
 
         # Schedule again
         win.after(500, gen_update)
@@ -1554,40 +1828,11 @@ def options():
                             font=("Arial", 12),
                             padding=(5,10,5,10))
             darktheme_button.config(text="Enable Dark Theme: Off")
-    def toggle_mus():
-        global mus, clicky
-        clicky += 1
-        if mus:
-            mus = False
-            music.stop_music()
-            music_button.config(text = "Toggle Music: Off")
-        else:
-            mus = True
-            music.play_music()
-            music_button.config(text = "Toggle Music: On")
-        if clicky == 2:
-            clicky = 0
-
-    def music_player():
-        # Import and launch the AudioGUI from custom_mus module
-        from custom_mus import AudioGUI
-        # Create a new window for the music player
-        music_window = tk.Toplevel(root)
-        # Initialize the GUI in the new window
-        gui = AudioGUI(music_window)
-        # Handle the window close event through the GUI's on_closing method
-        music_window.protocol("WM_DELETE_WINDOW", gui.on_closing)
 
     settings_window = tk.Toplevel(root)
     settings_window.geometry("500x400")
     darktheme_button = ttk.Button(settings_window, text = "Enable Dark Theme", command = darktheme)
     darktheme_button.place(relx=0.5, y=50, anchor='center')
-    music_button = ttk.Button(settings_window, text="Toggle Music", command=toggle_mus)
-    music_button.place(relx=0.5, y=100, anchor='center')
-    mus_warn = ttk.Label(settings_window, text = "Toggle music off before enabling music player")
-    mus_warn.place(relx=0.5, y=150, anchor='center')
-    custom_mus_button = ttk.Button(settings_window, text = "Open Dedicated Music Player", command = music_player)
-    custom_mus_button.place(relx=0.5, y=200, anchor='center')
 
 root = tk.Tk()
 root.title("MONOCLICKER")
@@ -1710,7 +1955,7 @@ def get_current_rotations():
 
 def purchase_upgrade(upgrade_index):
     """Purchase a rotating upgrade"""
-    global g
+    global g, music_player_unlocked
     current_rotations = get_current_rotations()
     if upgrade_index >= len(current_rotations):
         return
@@ -1721,13 +1966,26 @@ def purchase_upgrade(upgrade_index):
     if g >= cost:
         g -= cost
         g_label.config(text=f"{format(g)}G")
-        active_upgrades.append({
-            "name": upgrade["name"],
-            "effect": upgrade["effect"],
-            "end_time": time.time() + upgrade["duration"] if upgrade["duration"] > 0 else 0
-        })
-        add_log(f"Purchased upgrade: {upgrade['name']}")
-        messagebox.showinfo("Upgrade Purchased!", f"{upgrade['name']}\n\nEffect: {upgrade['effect']}")
+        
+        # Special handling for Music Player Unlock
+        if upgrade["name"] == "Music Player Unlock":
+            if music_player_unlocked:
+                messagebox.showinfo("Already Unlocked", "You already have the Music Player!")
+                g += cost  # Refund
+                g_label.config(text=f"{format(g)}G")
+                return
+            music_player_unlocked = True
+            add_log("Music Player unlocked!")
+            messagebox.showinfo("Music Player Unlocked!", "Congratulations! You can now use the music player in the settings menu.")
+        else:
+            # Regular timed upgrade
+            active_upgrades.append({
+                "name": upgrade["name"],
+                "effect": upgrade["effect"],
+                "end_time": time.time() + upgrade["duration"] if upgrade["duration"] > 0 else 0
+            })
+            add_log(f"Purchased upgrade: {upgrade['name']}")
+            messagebox.showinfo("Upgrade Purchased!", f"{upgrade['name']}\n\nEffect: {upgrade['effect']}")
     else:
         messagebox.showerror("Not Enough Gold", f"You need {format(cost)}G to purchase this upgrade!")
 
@@ -1901,9 +2159,7 @@ def update_timer():
         if taxtime % 50 == 0:
             add_log(f"current TaxTime: {minutes:02d}:{seconds:02d}")
         if taxtime == 8:
-            music.stop_music()
             sound4.play()
-            music.play_music()
         taxtime -= 1
         timer_job = root.after(1000, update_timer)
     else:
@@ -1943,9 +2199,25 @@ stats_button.grid(row=2, column=2, padx=10, pady=10)
 
 settings_button = ttk.Button(main_frame, text="Settings", command=options)
 settings_button.grid(row=2, column=3, padx=10, pady=10)
-
+# Music player button
+def music_player():
+        # Import and launch the AudioGUI from custom_mus module
+        from custom_mus import AudioGUI
+        # Create a new window for the music player
+        music_window = tk.Toplevel(root)
+        # Initialize the GUI in the new window
+        gui = AudioGUI(music_window)
+        # Handle the window close event through the GUI's on_closing method
+        music_window.protocol("WM_DELETE_WINDOW", gui.on_closing)
+def if_mus_unlock():
+    if not music_player_unlocked:
+        custom_mus_button.config(state=tk.DISABLED,text = "Music Player Locked")
+    else:
+        custom_mus_button.config(state=tk.ACTIVE,text = "Open Dedicated Music Player")
+custom_mus_button = ttk.Button(main_frame, text = "Open Dedicated Music Player", command = music_player)
+custom_mus_button.grid(row=3,column=2,padx=10,pady=10)
 quit_button = ttk.Button(main_frame, text="Quit Game", command=root.destroy)
-quit_button.grid(row=3, column=2, padx=10, pady=10)
+quit_button.grid(row=4, column=2, padx=10, pady=10)
 
 # Exp labels and stuff
 
@@ -2118,7 +2390,7 @@ def save_game():
     global gen_lvl3, g_given3, upgrade_cost3, igen_price, igen_shop_amnt, igen_amnt
     global level, next_level_exp, current_exp
     global randgen_price, randgen_shop_amnt, randgen_amnt, g_given4, gen_lvl4, upgrade_cost4, gen_chance
-    global total_g_earned, total_clicks, next_rotation_time, current_rotation_index, active_upgrades
+    global total_g_earned, total_clicks, next_rotation_time, current_rotation_index, active_upgrades, music_player_unlocked
     save_data = {
         "g": g,
         "current_exp": current_exp,
@@ -2163,7 +2435,8 @@ def save_game():
         "total_clicks": total_clicks,
         "next_rotation_time": next_rotation_time,
         "current_rotation_index": current_rotation_index,
-        "active_upgrades": active_upgrades
+        "active_upgrades": active_upgrades,
+        "music_player_unlocked": music_player_unlocked
     }
     save_path = os.path.join(BASE_DIR, "savegame.json")
     try:
@@ -2184,6 +2457,25 @@ def load_game():
     global level, next_level_exp, current_exp
     global randgen_price, randgen_shop_amnt, randgen_amnt, randgen_list, g_given4, gen_lvl4, upgrade_cost4, gen_chance, randgen_stock
     global total_g_earned, total_clicks, next_rotation_time, current_rotation_index, active_upgrades
+    global plasma_list, steam_list, void_list, chronos_list, music_player_unlocked
+
+    # Stop all existing generators to prevent EXP exploit from orphaned callbacks
+    for gen in gen_list:
+        gen.running = False
+    for gen in bgen_list:
+        gen.running = False
+    for gen in igen_list:
+        gen.running = False
+    for gen in randgen_list:
+        gen.running = False
+    for gen in plasma_list:
+        gen.running = False
+    for gen in steam_list:
+        gen.running = False
+    for gen in void_list:
+        gen.running = False
+    for gen in chronos_list:
+        gen.running = False
 
     gen_list = []
     bgen_list = []
@@ -2220,7 +2512,7 @@ def load_game():
         igen_price = save_data.get("igen_price", 250)
         igen_shop_amnt = save_data.get("igen_shop_amnt", 1)
         igen_amnt = save_data.get("igen_amnt", 0)
-        current_exp = save_data.get("current_exp", 0)
+        current_exp = save_data.get("current_exp", 0) - save_data.get("current_exp", 0)
         next_level_exp = save_data.get("next_level_exp", 100)
         level = save_data.get("level", 1)
         randgen_price = save_data.get("randgen_price", 77.7)
@@ -2236,10 +2528,14 @@ def load_game():
         next_rotation_time = save_data.get("next_rotation_time", 0)
         current_rotation_index = save_data.get("current_rotation_index", 0)
         active_upgrades = save_data.get("active_upgrades", [])
+        music_player_unlocked = save_data.get("music_player_unlocked", False)
         
         level_label.config(text=f"Level: {level}")
         level_vis['maximum'] = next_level_exp
         level_vis['value'] = current_exp
+        stats_exp_label.config(text=f"EXP: {int(current_exp)}/{int(next_level_exp)}")
+        level_amnt_label.config(text=f"{int(current_exp)}/{int(next_level_exp)}")
+        root.update()  # Force UI refresh to show loaded progress bar values
         # Re-create generators
         for _ in range(save_data.get("gen_count", 0)):
             gen_list.append(Generator(gen_lvl))
@@ -2337,25 +2633,20 @@ save_label.grid(row=0, column=2, padx=5)
 
 # Place in bottom-right corner with padding
 save_frame.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)
-music.play_music()  # Start music and loop forever
 
 def toggle_mus():
-    global mus, clicky
+    global mus, clicky, music_player_unlocked
     clicky += 1
+    if not music_player_unlocked:
+        messagebox.showinfo("Music Player Locked", "Unlock the Music Player upgrade first!")
+        return
     if mus:
         mus = False
-        music.stop_music()
     else:
         mus = True
-        music.play_music()
     if clicky == 2:
         clicky = 0
-def music_poll():
-    if mus == True:
-        music.check_and_advance()
-    else:
-        pass
-    root.after(1000, music_poll)  # Check every second
+
 # Initialize PopupManager (after all UI elements are created)
 popup_manager = None
 
@@ -2389,12 +2680,12 @@ def initialize_popup_manager():
 
     popup_manager = PopupManager(root, get_money, set_money, get_level, set_level, sound8, sound9, sound10, sound11, root)
     popup_manager.schedule_popups()
-
-music.play_music()
+# Initialize the electricity loop
 electricity()
+# Intialize the pro tip text
 pro_tip_text()
-music_poll()  # Start polling
 load_game()  # Load da game at start
+# Check that electricity
 elec_checker()
 initialize_popup_manager()  # Initialize popup system after all UI is ready
 
@@ -2402,5 +2693,7 @@ initialize_popup_manager()  # Initialize popup system after all UI is ready
 update_player_stats()
 update_rotating_upgrades_display()
 
+# Check if player unlocked music player
+if_mus_unlock()
+
 root.mainloop()
-music.close()
