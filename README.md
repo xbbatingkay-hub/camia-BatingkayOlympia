@@ -84,6 +84,7 @@ Gameplay
 - Get annoyed by randomly appearing but somewhat unobtrusive pop-ups
 - Watch as your money gain gets increasingly ridiculous
 - Suffer the pain of taxes
+- Listen to cool music with the built-in music player in the settings! (press the folder button to add music in the custom music folder)
 (Warning: If you don't hear anything, it's because you didn't activate the music player in the settings)
 
 
@@ -102,8 +103,12 @@ Upgrade and Status Menu
 <img width="2559" height="1439" alt="Screenshot 2026-03-04 184358" src="https://github.com/user-attachments/assets/0bda8008-9c62-47b1-8d95-49ea64b54d57" />
 
 Settings: 
-
 <img width="510" height="443" alt="Screenshot 2026-03-04 184403" src="https://github.com/user-attachments/assets/4706fb35-5e75-4ef3-a8a6-a21b04c07f5a" />
+
+Music player:
+
+
+
 
 
 
