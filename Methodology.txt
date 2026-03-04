@@ -1,12 +1,13 @@
 ===== Methodology =====
 
-- GUI
+Implementation of core features and Technologies used
+- GUI (especially for main menu)
   - I used Tkinter for the GUI partially because I didn't know that other alternatives existed, and also because it was relatively simple for me, since I didn't work with GUI before.
-  - I also used sv_ttk to make the GUI uniform and clean, although now I'm not sure if it did that, and for Dark Mode. (I made dark mode cuz I used to work on the project late in the night)
+  - I also used sv_ttk to make the GUI uniform and clean, although now I'm not sure if it did that, and for Dark Mode for accessibility.
 - Saving and Loading
-  - I used JSON files and the JSON module for saving and loading because it makes it easy to detect flaws in saves during testing, and also served as a way to look at your progress (until I added the plyaer status widget)
+  - I used JSON files and the JSON module for saving and loading because it makes it easy to detect flaws in saves during testing, and also served as a way to look at your progress (until I added the player status widget)
 - The Generators
-  - They all just generate G, and I used the random module for the Randomized Generator because I needed its output to be randomized.
+  - They all generate G, and I used the random module for the Randomized Generator because I needed its output to be randomized.
 - The Fix Minigames
   - Also used Tkinter for this stuff, and the progressbar that was already with Tkinter was useful for the timing minigame for the Randomized Generator
 - Sounds
@@ -22,5 +23,9 @@
   - I used subprocess to call the "pip install" command to install the packages needed
   - Sys is used to get the Python executable path to make sure that pip installs in the correct Python version and exits the program if it fails
   - importlib allows the program to test if the module already exists
+Backend Communication (if this counts as it)
+- Functions use direct references to other functions
+- The functions for each window usually use the same global variables
+- Polling/update loops are used for some labels or buttons (like the money counter), such as in gen_update(), which frequently refreshes UI
 
-Some of the other modules imported into the main game are just Python files I made to store other things, such as the extra generators, the pop-up windows, and the cool music player
+Some of the other modules imported into the main game are just Python files I made to store other things, such as the extra generators, the pop-up windows, and the cool music player, or other things already included in the modules
