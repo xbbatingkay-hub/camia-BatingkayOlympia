@@ -1898,25 +1898,25 @@ stats_igen_label.pack(anchor="w", pady=2)
 stats_randgen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(randgen_list)}", font=("Arial", 11))
 stats_randgen_label.pack(anchor="w", pady=2)
 
-stats_ngen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(ngen_list)}", font=("Arial", 11))
+stats_ngen_label = tk.Label(player_stats_frame, text=f"Nuclear Gens: {len(ngen_list)}", font=("Arial", 11))
 stats_ngen_label.pack(anchor="w", pady=2)
 
-stats_qgen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(qgen_list)}", font=("Arial", 11))
+stats_qgen_label = tk.Label(player_stats_frame, text=f"Quantum Gens: {len(qgen_list)}", font=("Arial", 11))
 stats_qgen_label.pack(anchor="w", pady=2)
 
-stats_fgen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(fgen_list)}", font=("Arial", 11))
+stats_fgen_label = tk.Label(player_stats_frame, text=f"Fusion Gens: {len(fgen_list)}", font=("Arial", 11))
 stats_fgen_label.pack(anchor="w", pady=2)
 
-stats_plasmagen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(plasma_list)}", font=("Arial", 11))
+stats_plasmagen_label = tk.Label(player_stats_frame, text=f"Plasma Gens: {len(plasma_list)}", font=("Arial", 11))
 stats_plasmagen_label.pack(anchor="w", pady=2)
 
-stats_steamgen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(steam_list)}", font=("Arial", 11))
+stats_steamgen_label = tk.Label(player_stats_frame, text=f"Steam Gens: {len(steam_list)}", font=("Arial", 11))
 stats_steamgen_label.pack(anchor="w", pady=2)
 
-stats_voidgen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(void_list)}", font=("Arial", 11))
+stats_voidgen_label = tk.Label(player_stats_frame, text=f"Void Gens: {len(void_list)}", font=("Arial", 11))
 stats_voidgen_label.pack(anchor="w", pady=2)
 
-stats_chrongen_label = tk.Label(player_stats_frame, text=f"Random Gens: {len(chronos_list)}", font=("Arial", 11))
+stats_chrongen_label = tk.Label(player_stats_frame, text=f"Chronos Gens: {len(chronos_list)}", font=("Arial", 11))
 stats_chrongen_label.pack(anchor="w", pady=2)
 
 
