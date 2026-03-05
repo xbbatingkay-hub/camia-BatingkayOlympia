@@ -2399,7 +2399,21 @@ def pro_tip_text():
         "Hello I am Jibby-Rael, the raeliest.",
         "We love capitalism, can you say you love capitalism?",
         "Toilet of Skibidi Perhaps?",
-        "Check out the new music player in the settings! Its buggy tho..."
+        "Check out the new music player in the settings! Its buggy tho...",
+        "Hey, y'know what would be nice? GRAPHICS.",
+        "Wait a second..",
+        "Get to clicking.",
+        "Coming soon to a computer near you!",
+        "Steam? Why, I love Steamships, what about it?",
+        "What is the derivative of 2x?",
+        "Jolly good.",
+        "God Save the King!",
+        "Rule Britannia, Britannia rules the waves",
+        "Keep clicking.",
+        "G is earned!",
+        "Are you having fun yet?",
+        "Not a big fan of the government. (30 on 30)",
+    
     ]
     tip = random.choice(tips)
     pro_tip.config(text=f"Pro tip: {tip}")
@@ -2720,3 +2734,4 @@ if_mus_unlock()
 
 
 root.mainloop()
+
