@@ -1478,9 +1478,30 @@ def upgrade_and_stats():
     stats_tab = ttk.Frame(notebook)
     notebook.add(stats_tab, text="Generator Status")
 
+    # Create canvas and scrollbar for scrolling in Generator Status tab
+    stats_canvas = tk.Canvas(stats_tab, bg="white")
+    stats_scrollbar = ttk.Scrollbar(stats_tab, orient="vertical", command=stats_canvas.yview)
+    stats_scrollable_frame = tk.Frame(stats_canvas, bg="white")
+
+    stats_canvas.create_window((0, 0), window=stats_scrollable_frame, anchor="nw")
+    stats_canvas.configure(yscrollcommand=stats_scrollbar.set)
+
+    def on_stats_frame_configure(event=None):
+        stats_canvas.configure(scrollregion=stats_canvas.bbox("all"))
+        stats_canvas.itemconfig("all", width=stats_canvas.winfo_width())
+
+    stats_scrollable_frame.bind("<Configure>", on_stats_frame_configure)
+
+    stats_canvas.pack(side="left", fill="both", expand=True)
+    stats_scrollbar.pack(side="right", fill="y")
+
+    def _on_stats_mousewheel(event):
+        stats_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    stats_canvas.bind_all("<MouseWheel>", _on_stats_mousewheel)
+
     # Standard Generator
     stdgen_status_frame = tk.LabelFrame(
-    stats_tab,
+    stats_scrollable_frame,
     text="Standard Generator",
     font=("Arial", 14, "bold"),
     padx=20,
@@ -1511,7 +1532,7 @@ def upgrade_and_stats():
 
     # Massive Generator
     massgen_status_frame = tk.LabelFrame(
-    stats_tab,
+    stats_scrollable_frame,
     text="Massive Generator",
     font=("Arial", 14, "bold"),
     padx=20,
@@ -1542,7 +1563,7 @@ def upgrade_and_stats():
 
     # Industrial Generator
     indgen_status_frame = tk.LabelFrame(
-    stats_tab,
+    stats_scrollable_frame,
     text="Industrial Generator",
     font=("Arial", 14, "bold"),
     padx=20,
@@ -1574,7 +1595,7 @@ def upgrade_and_stats():
 
     # Randomized Generator
     randgen_status_frame = tk.LabelFrame(
-    stats_tab,
+    stats_scrollable_frame,
     text="Randomized Generator",
     font=("Arial", 14, "bold"),
     padx=20,
@@ -1605,7 +1626,7 @@ def upgrade_and_stats():
 
     # --- Plasma Generator Status ---
     plasma_status_frame = tk.LabelFrame(
-        stats_tab,
+        stats_scrollable_frame,
         text="Plasma Generator",
         font=("Arial", 14, "bold"),
         padx=20,
@@ -1636,7 +1657,7 @@ def upgrade_and_stats():
 
     # --- Steam Generator Status ---
     steam_status_frame = tk.LabelFrame(
-        stats_tab,
+        stats_scrollable_frame,
         text="Steam Generator",
         font=("Arial", 14, "bold"),
         padx=20,
@@ -1667,7 +1688,7 @@ def upgrade_and_stats():
 
     # --- Void Generator Status ---
     void_status_frame = tk.LabelFrame(
-        stats_tab,
+        stats_scrollable_frame,
         text="Void Generator",
         font=("Arial", 14, "bold"),
         padx=20,
@@ -1698,7 +1719,7 @@ def upgrade_and_stats():
 
     # --- Chronos Generator Status ---
     chronos_status_frame = tk.LabelFrame(
-        stats_tab,
+        stats_scrollable_frame,
         text="Chronos Generator",
         font=("Arial", 14, "bold"),
         padx=20,
@@ -1729,7 +1750,7 @@ def upgrade_and_stats():
 
     # Electricity Status
     elec_status_frame = tk.LabelFrame(
-    stats_tab,
+    stats_scrollable_frame,
     text="Electricity",
     font=("Arial", 14, "bold"),
     padx=20,
@@ -1752,7 +1773,7 @@ def upgrade_and_stats():
     elec_fix_button.grid(row=0, column=1, padx=20)
 
     # Exit Button
-    exit_button = ttk.Button(stats_tab, text="Exit Menu", command=win.destroy)
+    exit_button = ttk.Button(stats_scrollable_frame, text="Exit Menu", command=win.destroy)
     exit_button.pack()
 
     # Helper function to get status for a list
