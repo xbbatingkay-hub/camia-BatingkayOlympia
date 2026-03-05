@@ -1,3 +1,4 @@
+# import them needed modules
 import subprocess
 import sys
 import importlib
@@ -18,4 +19,4 @@ def install_and_import(package):
             sys.exit(1)
 # Install them packages
 install_and_import('sv_ttk')
-install_and_import('pygame')
+install_and_import('pygame-ce')
