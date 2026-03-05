@@ -22,7 +22,7 @@ class MathPopup(tk.Toplevel):
     
     def __init__(self, parent, on_correct, on_wrong, sound10, sound11):
         super().__init__(parent)
-        self.title("Jibrael's Awesome Math Quiz!")
+        self.title("Jibrael's Totally Awesome Math Quiz!")
         self.geometry("400x300")
         self.resizable(False, False)
         self.on_correct = on_correct
@@ -42,14 +42,16 @@ class MathPopup(tk.Toplevel):
         self.sound10.play()
         
         # Generate random math problem
-        num1 = random.randint(5, 50)
-        num2 = random.randint(5, 50)
-        self.operator = random.choice(['+', '-', '*'])
+        num1 = random.randint(5, 1500)
+        num2 = random.randint(5, 1500)
+        self.operator = random.choice(['+', '-', '*', '/'])
         
         if self.operator == '+':
             self.correct_answer = num1 + num2
         elif self.operator == '-':
             self.correct_answer = num1 - num2
+        elif self.operator == '/':
+            self.correct_answer = num1 / num2
         else:  # '*'
             self.correct_answer = num1 * num2
         
@@ -83,13 +85,19 @@ class MathPopup(tk.Toplevel):
         try:
             user_answer = int(self.answer_entry.get())
             if user_answer == self.correct_answer:
-                messagebox.showinfo("Correct!", "You got it right! +500G and +50 EXP!")
+                messagebox.showinfo("Correct!", "WOW YOU EXIST! +500G and +50 EXP!")
                 self.on_correct()
                 self.destroy()
             else:
-                messagebox.showerror("Wrong!", f"Wrong answer! The correct answer was {self.correct_answer}.\n-200G!")
-                self.on_wrong()
-                self.destroy()
+                if self.operator == "/":
+                    if user_answer == round(self.correct_answer,2):
+                        messagebox.showinfo("Correct!", "WOW YOU EXIST! +500G and +50 EXP!")
+                        self.on_correct()
+                        self.destroy()
+                else:
+                    messagebox.showerror("INCORRECT!", f"I HEAR MATH THAT BAD! The correct answer was {self.correct_answer}.\n-500G!")
+                    self.on_wrong()
+                    self.destroy()
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter a number!")
     
@@ -135,6 +143,10 @@ class VirusPopup(tk.Toplevel):
             "Is Bastijn a cool guy or nah?",
             "Jibraelli Donelli",
             "Put the pineapple on the pizza.",
+            "Is anyone there?",
+            "HEY PAY ATTENTION TO ME",
+            "This message is sponsored by Jibrael",
+            
         ]
         
         message = random.choice(ragebait_messages)
