@@ -221,7 +221,8 @@ class Generator():
                     self.running = False
                     return
 
-            elif elec is False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -238,7 +239,7 @@ class Generator():
     def lvlup(self):
         self.gen_level += 1
         global g_given1
-        g_given1 = int(g_given1 * 1.15)
+        g_given1 = round(g_given1 * 1.15, 2)
         return g_given1
 
     def mark_fixed(self):
@@ -268,7 +269,8 @@ class BetterGenerator():
                     self.running = False
                     return
 
-            elif elec is False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -285,7 +287,7 @@ class BetterGenerator():
     def lvlup(self):
         self.gen_level += 1
         global g_given2
-        g_given2 = int(g_given2 * 1.15)
+        g_given2 = round(g_given2 * 1.15, 2)
         return g_given2
 
     def mark_fixed(self):
@@ -314,7 +316,8 @@ class IndusGenerator():
                     self.running = False
                     return
 
-            elif elec is False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -327,6 +330,18 @@ class IndusGenerator():
             gain_exp(g_given3)
             g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
             root.after(1000, self.start_generating)
+
+    def lvlup(self):
+        global g_given3
+        g_given3 = int(g_given3 * 1.15)
+        return g_given3
+
+    def mark_fixed(self):
+        self.safe_until = time.time() + random.randint(60, 600)
+        self.running = True
+        self.off = False
+        self.start_generating()
+
 class RandGenerator():
     __slots__ = ('gen_level', 'running', 'off', 'safe_until')
     # Random chance generator - rare
@@ -346,7 +361,8 @@ class RandGenerator():
                     self.running = False
                     return
 
-            elif elec is False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -395,7 +411,8 @@ class NuclearGenerator():
                     self.running = False
                     return
 
-            elif elec is False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -441,7 +458,8 @@ class QuantumGenerator():
                     self.running = False
                     return
 
-            elif elec is False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -487,7 +505,8 @@ class FusionGenerator():
                     self.running = False
                     return
 
-            elif elec is False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -532,7 +551,8 @@ class PlasmaGenerator():
                     self.running = False
                     return
 
-            elif False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -582,7 +602,8 @@ class SteamGenerator():
                     self.running = False
                     return
 
-            elif False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -632,7 +653,8 @@ class VoidGenerator():
                     self.running = False
                     return
 
-            elif False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -682,7 +704,8 @@ class ChronosGenerator():
                     self.running = False
                     return
 
-            elif False:
+            if elec is False:
+                self.running = False
                 self.off = True
                 return
 
@@ -755,10 +778,10 @@ def steam_fix_minigame(gen_list_to_fix):
         progress_bar['value'] = clicks[0]
         if clicks[0] >= clicks_needed:
             for gobj in gen_list_to_fix:
-                gobj.running = True
-                gobj.off = False
-                gobj.mark_fixed()
-                gobj.start_generating()
+                if not gobj.running:
+                    gobj.running = True
+                    gobj.off = False
+                    gobj.mark_fixed()
             try:
                 gen_update()
             except:
@@ -833,10 +856,10 @@ def plasma_fix(gen_list_to_fix):
         progress_bar['value'] = clicks[0]
         if clicks[0] >= clicks_needed:
             for gobj in gen_list_to_fix:
-                gobj.running = True
-                gobj.off = False
-                gobj.mark_fixed()
-                gobj.start_generating()
+                if not gobj.running:
+                    gobj.running = True
+                    gobj.off = False
+                    gobj.mark_fixed()
             try:
                 gen_update()
             except:
@@ -919,10 +942,10 @@ def void_fix(gen_list_to_fix):
             success_label.config(text=f"Connections: {success[0]}/{success_needed}")
             if success[0] >= success_needed:
                 for gobj in gen_list_to_fix:
-                    gobj.running = True
-                    gobj.off = False
-                    gobj.mark_fixed()
-                    gobj.start_generating()
+                    if not gobj.running:
+                        gobj.running = True
+                        gobj.off = False
+                        gobj.mark_fixed()
                 try:
                     gen_update()
                 except:
@@ -1011,10 +1034,10 @@ def chronos_fix(gen_list_to_fix):
             success_label.config(text=f"Connections: {success[0]}/{success_needed}")
             if success[0] >= success_needed:
                 for gobj in gen_list_to_fix:
-                    gobj.running = True
-                    gobj.off = False
-                    gobj.mark_fixed()
-                    gobj.start_generating()
+                    if not gobj.running:
+                        gobj.running = True
+                        gobj.off = False
+                        gobj.mark_fixed()
                 try:
                     gen_update()
                 except:
@@ -1606,10 +1629,10 @@ def upgrade_and_stats():
             progress_bar['value'] = clicks[0]
             if clicks[0] >= clicks_needed:
                 for gobj in gen_list_to_fix:
-                    gobj.running = True
-                    gobj.off = False
-                    gobj.mark_fixed()
-                    getattr(gobj, start_method_name)()
+                    if not gobj.running:
+                        gobj.running = True
+                        gobj.off = False
+                        gobj.mark_fixed()
                 gen_update()
                 maint_win.destroy()
             else:
@@ -1750,10 +1773,10 @@ def upgrade_and_stats():
             if success[0] == success_needed:
                 # Fix the random generators
                 for gobj in randgen_list:
-                    gobj.running = True
-                    gobj.off = False
-                    gobj.mark_fixed()
-                    gobj.start_generating()
+                    if not gobj.running:
+                        gobj.running = True
+                        gobj.off = False
+                        gobj.mark_fixed()
                 try:
                     gen_update()
                 except:
@@ -1842,14 +1865,14 @@ def upgrade_and_stats():
             gen_lvl += 1
             upgrade_cost = int(upgrade_cost * 1.35 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             stdgen_label.config(text=f"Level: {gen_lvl}")
@@ -1876,14 +1899,14 @@ def upgrade_and_stats():
             gen_lvl2 += 1
             upgrade_cost2 = int(upgrade_cost2 * 1.4 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             bgen_label.config(text=f"Level: {gen_lvl2}")
@@ -1910,14 +1933,14 @@ def upgrade_and_stats():
             gen_lvl3 += 1
             upgrade_cost3 = int(upgrade_cost3 * 1.5 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             igen_label.config(text=f"Level: {gen_lvl3}")
@@ -1944,14 +1967,14 @@ def upgrade_and_stats():
             gen_lvl4 += 1
             upgrade_cost4 = int(upgrade_cost4 * 1.5 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             randgen_label.config(text=f"Level: {gen_lvl4}")
@@ -1972,14 +1995,14 @@ def upgrade_and_stats():
         if level >= upgrade_cost8:
             level -= upgrade_cost8
             # refresh the main level label with tier suffix
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             gen_lvl8 += 1
@@ -2001,14 +2024,14 @@ def upgrade_and_stats():
         global gen_lvl11, upgrade_cost11, g_given11, level
         if level >= upgrade_cost11:
             level -= upgrade_cost11
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             gen_lvl11 += 1
@@ -2030,14 +2053,14 @@ def upgrade_and_stats():
         global gen_lvl9, upgrade_cost9, g_given9, level
         if level >= upgrade_cost9:
             level -= upgrade_cost9
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             gen_lvl9 += 1
@@ -2059,14 +2082,14 @@ def upgrade_and_stats():
         global gen_lvl10, upgrade_cost10, g_given10, level
         if level >= upgrade_cost10:
             level -= upgrade_cost10
-            if level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
+            if level >= 100:
+                level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
+            elif level >= 50:
+                level_label.config(text=f"Level: {level} (II)")
+            elif level >= 25:
+                level_label.config(text=f"Level: {level} (I)")
             else:
                 level_label.config(text=f"Level: {level}")
             gen_lvl10 += 1
@@ -2935,7 +2958,6 @@ level_vis.pack()
 
 level_vis['maximum'] = next_level_exp
 level_vis['value'] = current_exp
-g = 0
 def gain_exp(amount):
     global current_exp, next_level_exp, level
     current_exp = round(current_exp + amount, 2)  # Prevent tail growth
@@ -2949,14 +2971,14 @@ def gain_exp(amount):
         current_exp -= next_level_exp
         level += 1
         next_level_exp = level * 100
-        if level >= 25:
-            level_label.config(text=f"Level: {level} (I)")
-        elif level >= 50:
-            level_label.config(text=f"Level: {level} (II)")
+        if level >= 100:
+            level_label.config(text=f"Level: {level} (IV)")
         elif level >= 75:
             level_label.config(text=f"Level: {level} (III)")
-        elif level >= 100:
-            level_label.config(text=f"Level: {level} (IV)")
+        elif level >= 50:
+            level_label.config(text=f"Level: {level} (II)")
+        elif level >= 25:
+            level_label.config(text=f"Level: {level} (I)")
         else:
             level_label.config(text=f"Level: {level}")
         level_vis['maximum'] = next_level_exp
@@ -2975,14 +2997,14 @@ def check_value(amount):
         current_exp -= next_level_exp
         level += 1
         next_level_exp = level * 100
-        if level >= 25:
-            level_label.config(text=f"Level: {level} (I)")
-        elif level >= 50:
-            level_label.config(text=f"Level: {level} (II)")
+        if level >= 100:
+            level_label.config(text=f"Level: {level} (IV)")
         elif level >= 75:
             level_label.config(text=f"Level: {level} (III)")
-        elif level >= 100:
-            level_label.config(text=f"Level: {level} (IV)")
+        elif level >= 50:
+            level_label.config(text=f"Level: {level} (II)")
+        elif level >= 25:
+            level_label.config(text=f"Level: {level} (I)")
         else:
             level_label.config(text=f"Level: {level}")
         level_vis['maximum'] = next_level_exp
@@ -3327,7 +3349,7 @@ def load_game():
         igen_price = save_data.get("igen_price", 250)
         igen_shop_amnt = save_data.get("igen_shop_amnt", 1)
         igen_amnt = save_data.get("igen_amnt", 0)
-        current_exp = save_data.get("current_exp", 0) - save_data.get("current_exp", 0)
+        current_exp = save_data.get("current_exp", 0)
         next_level_exp = save_data.get("next_level_exp", 100)
         level = save_data.get("level", 1)
         randgen_price = save_data.get("randgen_price", 77.7)
@@ -3579,14 +3601,14 @@ def initialize_popup_manager():
     def set_level(new_level):
         global level
         level = new_level
-        if level >= 25:
-            level_label.config(text=f"Level: {level} (I)")
-        elif level >= 50:
-            level_label.config(text=f"Level: {level} (II)")
+        if level >= 100:
+            level_label.config(text=f"Level: {level} (IV)")
         elif level >= 75:
             level_label.config(text=f"Level: {level} (III)")
-        elif level >= 100:
-            level_label.config(text=f"Level: {level} (IV)")
+        elif level >= 50:
+            level_label.config(text=f"Level: {level} (II)")
+        elif level >= 25:
+            level_label.config(text=f"Level: {level} (I)")
         else:
             level_label.config(text=f"Level: {level}")
 
