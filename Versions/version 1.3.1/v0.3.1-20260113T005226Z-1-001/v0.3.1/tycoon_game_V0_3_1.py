@@ -8,8 +8,14 @@ import json
 import os
 import pygame
 import time
+import sys
 from datetime import datetime, timedelta
 from random_popups import PopupManager
+
+# DEBUG: Global debug log function
+def debug_log(msg):
+    print(f"[DEBUG] {msg}", file=sys.stderr)
+
 clicky = 0
 # Player Stats Variables
 total_g_earned = 0
@@ -57,7 +63,7 @@ gen_amnt = 0
 g_given1 = 0.1
 gen_lvl = 1
 upgrade_cost = 100
-std_lvl_cost = 2    # level cost for standard gen upgrade (increases over time)
+std_lvl_cost = 1000    # gold cost for standard gen upgrade (increases over time)
 #massive generators
 bgen_price = 100
 bgen_shop_amnt = 1
@@ -66,7 +72,7 @@ bgen_list = []
 g_given2 = 1
 gen_lvl2 = 1
 upgrade_cost2 = 200
-bgen_lvl_cost = 3   # level cost for massive gen upgrade (increases over time)
+bgen_lvl_cost = 1000   # gold cost for massive gen upgrade (increases over time)
 #industrial generators
 igen_price = 250
 igen_shop_amnt = 1
@@ -75,7 +81,7 @@ igen_list = []
 g_given3 = 10
 gen_lvl3 = 1
 upgrade_cost3 = 200
-igen_lvl_cost = 5   # level cost for industrial gen upgrade (increases over time)
+igen_lvl_cost = 1000   # gold cost for industrial gen upgrade (increases over time)
 #random generators
 randgen_price = 777
 randgen_shop_amnt = 1
@@ -84,7 +90,7 @@ randgen_list = []
 g_given4 = 100
 gen_lvl4 = 1
 upgrade_cost4 = 777
-rand_lvl_cost = 5   # level cost for random gen upgrade (increases over time)
+rand_lvl_cost = 1000   # gold cost for random gen upgrade (increases over time)
 gen_chance = 0.25
 # nuclear generators
 ngen_price = 500
@@ -141,63 +147,133 @@ next_level_exp = 100  # G needed for next level
 
 # Setup audio file paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-try:
-    sound1_path = os.path.join(BASE_DIR, "sounds", "correct.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound2_path = os.path.join(BASE_DIR, "sounds", "wrong.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound3_path = os.path.join(BASE_DIR, "sounds", "elec.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound4_path = os.path.join(BASE_DIR, "sounds", "timeup.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound5_path = os.path.join(BASE_DIR, "sounds", "energy1.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound6_path = os.path.join(BASE_DIR, "sounds", "energy2.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound7_path = os.path.join(BASE_DIR, "sounds", "buttonpress1.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound8_path = os.path.join(BASE_DIR, "sounds", "you-are-an-idiot.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound9_path = os.path.join(BASE_DIR, "sounds", "yougotmail.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound10_path = os.path.join(BASE_DIR, "sounds", "math-song.mp3")
-except FileNotFoundError:
-    pass
-try:
-    sound11_path = os.path.join(BASE_DIR, "sounds", "dr-reflex-hammer-hit.mp3")
-except FileNotFoundError:
-    pass
+
+# Initialize sound paths with default None
+sound1_path = None
+sound2_path = None
+sound3_path = None
+sound4_path = None
+sound5_path = None
+sound6_path = None
+sound7_path = None
+sound8_path = None
+sound9_path = None
+sound10_path = None
+sound11_path = None
+
+# Build sound paths
+sound1_path = os.path.join(BASE_DIR, "sounds", "correct.mp3")
+sound2_path = os.path.join(BASE_DIR, "sounds", "wrong.mp3")
+sound3_path = os.path.join(BASE_DIR, "sounds", "elec.mp3")
+sound4_path = os.path.join(BASE_DIR, "sounds", "timeup.mp3")
+sound5_path = os.path.join(BASE_DIR, "sounds", "energy1.mp3")
+sound6_path = os.path.join(BASE_DIR, "sounds", "energy2.mp3")
+sound7_path = os.path.join(BASE_DIR, "sounds", "buttonpress1.mp3")
+sound8_path = os.path.join(BASE_DIR, "sounds", "you-are-an-idiot.mp3")
+sound9_path = os.path.join(BASE_DIR, "sounds", "yougotmail.mp3")
+sound10_path = os.path.join(BASE_DIR, "sounds", "math-song.mp3")
+sound11_path = os.path.join(BASE_DIR, "sounds", "dr-reflex-hammer-hit.mp3")
+
 # Initialize pygame mixer for sound effects
+debug_log("Initializing pygame mixer...")
 pygame.mixer.init()
-sound1 = pygame.mixer.Sound(sound1_path)
-sound2 = pygame.mixer.Sound(sound2_path)
-sound3 = pygame.mixer.Sound(sound3_path)
-sound4 = pygame.mixer.Sound(sound4_path)
-sound5 = pygame.mixer.Sound(sound5_path)
-sound6 = pygame.mixer.Sound(sound6_path)
-sound7 = pygame.mixer.Sound(sound7_path)
-sound8 = pygame.mixer.Sound(sound8_path)
-sound9 = pygame.mixer.Sound(sound9_path)
-sound10 = pygame.mixer.Sound(sound10_path)
-sound11 = pygame.mixer.Sound(sound11_path)
+
+# DEBUG: Log sound loading with exception handling
+sound_loaded = [False] * 11
+sound_files = [sound1_path, sound2_path, sound3_path, sound4_path, sound5_path,
+               sound6_path, sound7_path, sound8_path, sound9_path, sound10_path, sound11_path]
+sound_names = ["sound1", "sound2", "sound3", "sound4", "sound5", "sound6", "sound7", 
+                "sound8", "sound9", "sound10", "sound11"]
+
+try:
+    sound1 = pygame.mixer.Sound(sound1_path)
+    sound_loaded[0] = True
+    debug_log(f"sound1 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound1: {e}")
+    sound1 = None
+
+try:
+    sound2 = pygame.mixer.Sound(sound2_path)
+    sound_loaded[1] = True
+    debug_log(f"sound2 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound2: {e}")
+    sound2 = None
+
+try:
+    sound3 = pygame.mixer.Sound(sound3_path)
+    sound_loaded[2] = True
+    debug_log(f"sound3 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound3: {e}")
+    sound3 = None
+
+try:
+    sound4 = pygame.mixer.Sound(sound4_path)
+    sound_loaded[3] = True
+    debug_log(f"sound4 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound4: {e}")
+    sound4 = None
+
+try:
+    sound5 = pygame.mixer.Sound(sound5_path)
+    sound_loaded[4] = True
+    debug_log(f"sound5 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound5: {e}")
+    sound5 = None
+
+try:
+    sound6 = pygame.mixer.Sound(sound6_path)
+    sound_loaded[5] = True
+    debug_log(f"sound6 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound6: {e}")
+    sound6 = None
+
+try:
+    sound7 = pygame.mixer.Sound(sound7_path)
+    sound_loaded[6] = True
+    debug_log(f"sound7 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound7: {e}")
+    sound7 = None
+
+try:
+    sound8 = pygame.mixer.Sound(sound8_path)
+    sound_loaded[7] = True
+    debug_log(f"sound8 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound8: {e}")
+    sound8 = None
+
+try:
+    sound9 = pygame.mixer.Sound(sound9_path)
+    sound_loaded[8] = True
+    debug_log(f"sound9 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound9: {e}")
+    sound9 = None
+
+try:
+    sound10 = pygame.mixer.Sound(sound10_path)
+    sound_loaded[9] = True
+    debug_log(f"sound10 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound10: {e}")
+    sound10 = None
+
+try:
+    sound11 = pygame.mixer.Sound(sound11_path)
+    sound_loaded[10] = True
+    debug_log(f"sound11 loaded successfully")
+except Exception as e:
+    debug_log(f"ERROR loading sound11: {e}")
+    sound11 = None
+
+debug_log(f"Sound loading complete. Success: {sum(sound_loaded)}/11")
 
 # Basic Mechanics
 # Toggle electricity on/off
@@ -236,7 +312,11 @@ class Generator():
 
             global g
             g += g_given1
-            g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            try:
+                if g_label:
+                    g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            except Exception as e:
+                debug_log(f"Error updating g_label: {e}")
             gain_exp(g_given1)
             root.after(1000, self.start_generating)
 
@@ -284,7 +364,11 @@ class BetterGenerator():
 
             global g
             g += g_given2
-            g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            try:
+                if g_label:
+                    g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            except Exception as e:
+                debug_log(f"Error updating g_label: {e}")
             gain_exp(g_given2)
             root.after(1000, self.start_generating)
 
@@ -332,7 +416,11 @@ class IndusGenerator():
             global g
             g += g_given3
             gain_exp(g_given3)
-            g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            try:
+                if g_label:
+                    g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            except Exception as e:
+                debug_log(f"Error updating g_label: {e}")
             root.after(1000, self.start_generating)
 
     def lvlup(self):
@@ -380,7 +468,11 @@ class RandGenerator():
                 g += x
                 gain_exp(x)
                 add_log(f"G increased by chance by {x}")
-            g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            try:
+                if g_label:
+                    g_label.config(text=f"{g:,.2f}G")  # Two decimals, commas for thousands
+            except Exception as e:
+                debug_log(f"Error updating g_label: {e}")
             root.after(1000, self.start_generating)
 
     def lvlup(self):
@@ -428,7 +520,11 @@ class NuclearGenerator():
             g += g_given5
             total_g_earned += g_given5
             gain_exp(g_given5)
-            g_label.config(text=f"{g:,.2f}G")
+            try:
+                if g_label:
+                    g_label.config(text=f"{g:,.2f}G")
+            except Exception as e:
+                debug_log(f"Error updating g_label: {e}")
             root.after(1000, self.start_generating)
 
     def lvlup(self):
@@ -475,7 +571,11 @@ class QuantumGenerator():
             g += g_given6
             total_g_earned += g_given6
             gain_exp(g_given6)
-            g_label.config(text=f"{g:,.2f}G")
+            try:
+                if g_label:
+                    g_label.config(text=f"{g:,.2f}G")
+            except Exception as e:
+                debug_log(f"Error updating g_label: {e}")
             root.after(1000, self.start_generating)
 
     def lvlup(self):
@@ -522,7 +622,11 @@ class FusionGenerator():
             g += g_given7
             total_g_earned += g_given7
             gain_exp(g_given7)
-            g_label.config(text=f"{g:,.2f}G")
+            try:
+                if g_label:
+                    g_label.config(text=f"{g:,.2f}G")
+            except Exception as e:
+                debug_log(f"Error updating g_label: {e}")
             root.after(1000, self.start_generating)
 
     def lvlup(self):
@@ -1492,26 +1596,47 @@ def shop():
 
     plasma_item = tk.Label(plasma_frame, text="Plasma Generator (2500G/s)", font=("Arial", 16))
     plasma_item.grid(row=0, column=0, sticky="w")
-    plasma_shop_amnt_label = tk.Label(plasma_frame, text=f"Current amount: {len(plasma_list)}", font=("Arial", 16))
-    plasma_shop_amnt_label.grid(row=2, column=0, sticky="w")
+    plasma_shop_amnt_label = tk.Label(plasma_frame, text=f"amount: {plasma_shop_amnt}", font=("Arial", 16))
+    plasma_shop_amnt_label.grid(row=0, column=1, padx=20)
+    plasma_shop_amnt_label2 = tk.Label(plasma_frame, text=f"Current amount: {len(plasma_list)}", font=("Arial", 16))
+    plasma_shop_amnt_label2.grid(row=2, column=0, sticky="w")
     plasma_shop_price_label = tk.Label(plasma_frame, text=f"Price: {format(plasma_price)}G", font=("Arial", 16))
     plasma_shop_price_label.grid(row=2, column=1)
     plasma_stock_label = tk.Label(plasma_frame, text=f"Stock: {plasma_stock}", font=("Arial", 16))
     plasma_stock_label.grid(row=2, column=2, padx=20)
     
+    def plasmaincrease():
+        global plasma_shop_amnt, plasma_stock
+        if plasma_shop_amnt < plasma_stock:
+            plasma_shop_amnt += 1
+            plasma_shop_amnt_label.config(text=f"amount: {plasma_shop_amnt}")
+    def plasmadecrease():
+        global plasma_shop_amnt, plasma_stock
+        if plasma_shop_amnt != 1 and plasma_shop_amnt > 0:
+            plasma_shop_amnt -= 1
+            plasma_shop_amnt_label.config(text=f"amount: {plasma_shop_amnt}")
+    
+    plasma_buy_amnt_inc = ttk.Button(plasma_frame, text="+1", command=plasmaincrease)
+    plasma_buy_amnt_inc.grid(row=0, column=2)
+    plasma_buy_amnt_dec = ttk.Button(plasma_frame, text="-1", command=plasmadecrease)
+    plasma_buy_amnt_dec.grid(row=0, column=3)
+    
     def plasmabuy():
-        global g, plasma_price, plasma_amnt, plasma_stock
-        if g >= plasma_price and plasma_stock > 0:
-            g -= plasma_price
+        global g, plasma_price, plasma_amnt, plasma_stock, plasma_shop_amnt
+        if g >= plasma_price * plasma_shop_amnt and plasma_shop_amnt <= plasma_stock and plasma_stock > 0:
+            g -= plasma_price * plasma_shop_amnt
             g_label.config(text=f"{format(g)}G")
             shop_g.config(text=f"{format(g)}G")
-            new_plasma = PlasmaGenerator(gen_lvl8)
-            plasma_list.append(new_plasma)
-            plasma_amnt += 1
-            plasma_stock -= 1
+            for i in range(plasma_shop_amnt):
+                new_plasma = PlasmaGenerator(gen_lvl8)
+                plasma_list.append(new_plasma)
+            plasma_amnt += plasma_shop_amnt
+            plasma_stock -= plasma_shop_amnt
+            plasma_shop_amnt = 1
             plasma_price = int(plasma_price * 1.4)
             plasma_shop_price_label.config(text=f"Price: {format(plasma_price)}G")
-            plasma_shop_amnt_label.config(text=f"Current amount: {len(plasma_list)}")
+            plasma_shop_amnt_label.config(text=f"amount: {plasma_shop_amnt}")
+            plasma_shop_amnt_label2.config(text=f"Current amount: {len(plasma_list)}")
             plasma_stock_label.config(text=f"Stock: {plasma_stock}")
     
     plasma_buy_button = ttk.Button(plasma_frame, text="BUY", command=plasmabuy)
@@ -1525,26 +1650,47 @@ def shop():
     steam_item.grid(row=0, column=0, sticky="w")
     steaminfo_label = tk.Label(steam_frame, text="High break chance (25%)", font=("Arial", 12), fg="red")
     steaminfo_label.grid(row=1, column=0, sticky="w")
-    steam_shop_amnt_label = tk.Label(steam_frame, text=f"Current amount: {len(steam_list)}", font=("Arial", 16))
-    steam_shop_amnt_label.grid(row=2, column=0, sticky="w")
+    steam_shop_amnt_label = tk.Label(steam_frame, text=f"amount: {steam_shop_amnt}", font=("Arial", 16))
+    steam_shop_amnt_label.grid(row=0, column=1, padx=20)
+    steam_shop_amnt_label2 = tk.Label(steam_frame, text=f"Current amount: {len(steam_list)}", font=("Arial", 16))
+    steam_shop_amnt_label2.grid(row=2, column=0, sticky="w")
     steam_shop_price_label = tk.Label(steam_frame, text=f"Price: {format(steam_price)}G", font=("Arial", 16))
     steam_shop_price_label.grid(row=2, column=1)
     steam_stock_label = tk.Label(steam_frame, text=f"Stock: {steam_stock}", font=("Arial", 16))
     steam_stock_label.grid(row=2, column=2, padx=20)
     
+    def steamincrease():
+        global steam_shop_amnt, steam_stock
+        if steam_shop_amnt < steam_stock:
+            steam_shop_amnt += 1
+            steam_shop_amnt_label.config(text=f"amount: {steam_shop_amnt}")
+    def steamdecrease():
+        global steam_shop_amnt, steam_stock
+        if steam_shop_amnt != 1 and steam_shop_amnt > 0:
+            steam_shop_amnt -= 1
+            steam_shop_amnt_label.config(text=f"amount: {steam_shop_amnt}")
+    
+    steam_buy_amnt_inc = ttk.Button(steam_frame, text="+1", command=steamincrease)
+    steam_buy_amnt_inc.grid(row=0, column=2)
+    steam_buy_amnt_dec = ttk.Button(steam_frame, text="-1", command=steamdecrease)
+    steam_buy_amnt_dec.grid(row=0, column=3)
+    
     def steambuy():
-        global g, steam_price, steam_amnt, steam_stock
-        if g >= steam_price and steam_stock > 0:
-            g -= steam_price
+        global g, steam_price, steam_amnt, steam_stock, steam_shop_amnt
+        if g >= steam_price * steam_shop_amnt and steam_shop_amnt <= steam_stock and steam_stock > 0:
+            g -= steam_price * steam_shop_amnt
             g_label.config(text=f"{format(g)}G")
             shop_g.config(text=f"{format(g)}G")
-            new_steam = SteamGenerator(gen_lvl11)
-            steam_list.append(new_steam)
-            steam_amnt += 1
-            steam_stock -= 1
+            for i in range(steam_shop_amnt):
+                new_steam = SteamGenerator(gen_lvl11)
+                steam_list.append(new_steam)
+            steam_amnt += steam_shop_amnt
+            steam_stock -= steam_shop_amnt
+            steam_shop_amnt = 1
             steam_price = int(steam_price * 1.3)
             steam_shop_price_label.config(text=f"Price: {format(steam_price)}G")
-            steam_shop_amnt_label.config(text=f"Current amount: {len(steam_list)}")
+            steam_shop_amnt_label.config(text=f"amount: {steam_shop_amnt}")
+            steam_shop_amnt_label2.config(text=f"Current amount: {len(steam_list)}")
             steam_stock_label.config(text=f"Stock: {steam_stock}")
     
     steam_buy_button = ttk.Button(steam_frame, text="BUY", command=steambuy)
@@ -1556,26 +1702,47 @@ def shop():
 
     void_item = tk.Label(void_frame, text="Void Generator (10000G/s) (Hard to fix)", font=("Arial", 16))
     void_item.grid(row=0, column=0, sticky="w")
-    void_shop_amnt_label = tk.Label(void_frame, text=f"Current amount: {len(void_list)}", font=("Arial", 16))
-    void_shop_amnt_label.grid(row=2, column=0, sticky="w")
+    void_shop_amnt_label = tk.Label(void_frame, text=f"amount: {void_shop_amnt}", font=("Arial", 16))
+    void_shop_amnt_label.grid(row=0, column=1, padx=20)
+    void_shop_amnt_label2 = tk.Label(void_frame, text=f"Current amount: {len(void_list)}", font=("Arial", 16))
+    void_shop_amnt_label2.grid(row=2, column=0, sticky="w")
     void_shop_price_label = tk.Label(void_frame, text=f"Price: {format(void_price)}G", font=("Arial", 16))
     void_shop_price_label.grid(row=2, column=1)
     void_stock_label = tk.Label(void_frame, text=f"Stock: {void_stock}", font=("Arial", 16))
     void_stock_label.grid(row=2, column=2, padx=20)
     
+    def voidincrease():
+        global void_shop_amnt, void_stock
+        if void_shop_amnt < void_stock:
+            void_shop_amnt += 1
+            void_shop_amnt_label.config(text=f"amount: {void_shop_amnt}")
+    def voiddecrease():
+        global void_shop_amnt, void_stock
+        if void_shop_amnt != 1 and void_shop_amnt > 0:
+            void_shop_amnt -= 1
+            void_shop_amnt_label.config(text=f"amount: {void_shop_amnt}")
+    
+    void_buy_amnt_inc = ttk.Button(void_frame, text="+1", command=voidincrease)
+    void_buy_amnt_inc.grid(row=0, column=2)
+    void_buy_amnt_dec = ttk.Button(void_frame, text="-1", command=voiddecrease)
+    void_buy_amnt_dec.grid(row=0, column=3)
+    
     def voidbuy():
-        global g, void_price, void_amnt, void_stock
-        if g >= void_price and void_stock > 0:
-            g -= void_price
+        global g, void_price, void_amnt, void_stock, void_shop_amnt
+        if g >= void_price * void_shop_amnt and void_shop_amnt <= void_stock and void_stock > 0:
+            g -= void_price * void_shop_amnt
             g_label.config(text=f"{format(g)}G")
             shop_g.config(text=f"{format(g)}G")
-            new_void = VoidGenerator(gen_lvl9)
-            void_list.append(new_void)
-            void_amnt += 1
-            void_stock -= 1
+            for i in range(void_shop_amnt):
+                new_void = VoidGenerator(gen_lvl9)
+                void_list.append(new_void)
+            void_amnt += void_shop_amnt
+            void_stock -= void_shop_amnt
+            void_shop_amnt = 1
             void_price = int(void_price * 1.5)
             void_shop_price_label.config(text=f"Price: {format(void_price)}G")
-            void_shop_amnt_label.config(text=f"Current amount: {len(void_list)}")
+            void_shop_amnt_label.config(text=f"amount: {void_shop_amnt}")
+            void_shop_amnt_label2.config(text=f"Current amount: {len(void_list)}")
             void_stock_label.config(text=f"Stock: {void_stock}")
     
     void_buy_button = ttk.Button(void_frame, text="BUY", command=voidbuy)
@@ -1587,26 +1754,47 @@ def shop():
 
     chronos_item = tk.Label(chronos_frame, text="Chronos Generator (50000G/s)", font=("Arial", 16))
     chronos_item.grid(row=0, column=0, sticky="w")
-    chronos_shop_amnt_label = tk.Label(chronos_frame, text=f"Current amount: {len(chronos_list)}", font=("Arial", 16))
-    chronos_shop_amnt_label.grid(row=2, column=0, sticky="w")
+    chronos_shop_amnt_label = tk.Label(chronos_frame, text=f"amount: {chronos_shop_amnt}", font=("Arial", 16))
+    chronos_shop_amnt_label.grid(row=0, column=1, padx=20)
+    chronos_shop_amnt_label2 = tk.Label(chronos_frame, text=f"Current amount: {len(chronos_list)}", font=("Arial", 16))
+    chronos_shop_amnt_label2.grid(row=2, column=0, sticky="w")
     chronos_shop_price_label = tk.Label(chronos_frame, text=f"Price: {format(chronos_price)}G", font=("Arial", 16))
     chronos_shop_price_label.grid(row=2, column=1)
     chronos_stock_label = tk.Label(chronos_frame, text=f"Stock: {chronos_stock}", font=("Arial", 16))
     chronos_stock_label.grid(row=2, column=2, padx=20)
     
+    def chronosincrease():
+        global chronos_shop_amnt, chronos_stock
+        if chronos_shop_amnt < chronos_stock:
+            chronos_shop_amnt += 1
+            chronos_shop_amnt_label.config(text=f"amount: {chronos_shop_amnt}")
+    def chronosdecrease():
+        global chronos_shop_amnt, chronos_stock
+        if chronos_shop_amnt != 1 and chronos_shop_amnt > 0:
+            chronos_shop_amnt -= 1
+            chronos_shop_amnt_label.config(text=f"amount: {chronos_shop_amnt}")
+    
+    chronos_buy_amnt_inc = ttk.Button(chronos_frame, text="+1", command=chronosincrease)
+    chronos_buy_amnt_inc.grid(row=0, column=2)
+    chronos_buy_amnt_dec = ttk.Button(chronos_frame, text="-1", command=chronosdecrease)
+    chronos_buy_amnt_dec.grid(row=0, column=3)
+    
     def chronosbuy():
-        global g, chronos_price, chronos_amnt, chronos_stock
-        if g >= chronos_price and chronos_stock > 0:
-            g -= chronos_price
+        global g, chronos_price, chronos_amnt, chronos_stock, chronos_shop_amnt
+        if g >= chronos_price * chronos_shop_amnt and chronos_shop_amnt <= chronos_stock and chronos_stock > 0:
+            g -= chronos_price * chronos_shop_amnt
             g_label.config(text=f"{format(g)}G")
             shop_g.config(text=f"{format(g)}G")
-            new_chronos = ChronosGenerator(gen_lvl10)
-            chronos_list.append(new_chronos)
-            chronos_amnt += 1
-            chronos_stock -= 1
+            for i in range(chronos_shop_amnt):
+                new_chronos = ChronosGenerator(gen_lvl10)
+                chronos_list.append(new_chronos)
+            chronos_amnt += chronos_shop_amnt
+            chronos_stock -= chronos_shop_amnt
+            chronos_shop_amnt = 1
             chronos_price = int(chronos_price * 1.6)
             chronos_shop_price_label.config(text=f"Price: {format(chronos_price)}G")
-            chronos_shop_amnt_label.config(text=f"Current amount: {len(chronos_list)}")
+            chronos_shop_amnt_label.config(text=f"amount: {chronos_shop_amnt}")
+            chronos_shop_amnt_label2.config(text=f"Current amount: {len(chronos_list)}")
             chronos_stock_label.config(text=f"Stock: {chronos_stock}")
     
     chronos_buy_button = ttk.Button(chronos_frame, text="BUY", command=chronosbuy)
@@ -1920,33 +2108,24 @@ def upgrade_and_stats():
     stdgen_label = tk.Label(stdgen_frame, text=f"Level: {gen_lvl}", font=("Arial", 16))
     stdgen_label.grid(row=0, column=0, sticky="w")
     def upgrader():
-        global gen_lvl, upgrade_cost, g_given1, level, inflation, std_lvl_cost
-        if level < std_lvl_cost:
-            stdgen_button.config(text="Not enough levels")
-            root.after(200, lambda: stdgen_button.config(text=f"UPGRADE ({std_lvl_cost} Levels)"))
+        global gen_lvl, upgrade_cost, g_given1, level, inflation, std_lvl_cost, g
+        if g < std_lvl_cost:
+            stdgen_button.config(text="Not enough gold")
+            root.after(200, lambda: stdgen_button.config(text=f"UPGRADE ({std_lvl_cost}G)"))
         else:
-            level -= std_lvl_cost
+            g -= std_lvl_cost
+            g_label.config(text=f"{g:,.2f}G")
             if len(gen_list) == 0:
                 return
             for newgen in gen_list:
                 newgen.lvlup()
             gen_lvl += 1
-            std_lvl_cost = max(std_lvl_cost + 1, int(std_lvl_cost * 1.5))
+            std_lvl_cost = max(std_lvl_cost + 500, int(std_lvl_cost * 1.5))
             upgrade_cost = int(upgrade_cost * 1.35 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
-            elif level >= 75:
-                level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
             stdgen_label.config(text=f"Level: {gen_lvl}")
-            stdgen_button.config(text=f"UPGRADE ({std_lvl_cost} Levels)")
-    stdgen_button = ttk.Button(stdgen_frame, text=f"UPGRADE ({std_lvl_cost} Levels)", command=upgrader)
+            stdgen_button.config(text=f"UPGRADE ({std_lvl_cost}G)")
+    stdgen_button = ttk.Button(stdgen_frame, text=f"UPGRADE ({std_lvl_cost}G)", command=upgrader)
     stdgen_button.grid(row=0, column=1, padx=20)
 
     # Massive Generator Upgrade
@@ -1955,33 +2134,24 @@ def upgrade_and_stats():
     bgen_label = tk.Label(bgen_frame, text=f"Level: {gen_lvl2}", font=("Arial", 16))
     bgen_label.grid(row=0, column=0, sticky="w")
     def upgrader2():
-        global gen_lvl2, upgrade_cost2, g_given2, level, inflation, bgen_lvl_cost
-        if level < bgen_lvl_cost:
-            bgen_button.config(text="Not enough levels")
-            root.after(200, lambda: bgen_button.config(text=f"UPGRADE ({bgen_lvl_cost} Levels)"))
+        global gen_lvl2, upgrade_cost2, g_given2, level, inflation, bgen_lvl_cost, g
+        if g < bgen_lvl_cost:
+            bgen_button.config(text="Not enough gold")
+            root.after(200, lambda: bgen_button.config(text=f"UPGRADE ({bgen_lvl_cost}G)"))
         else:
-            level -= bgen_lvl_cost
+            g -= bgen_lvl_cost
+            g_label.config(text=f"{g:,.2f}G")
             if len(bgen_list) == 0:
                 return
             for newgen2 in bgen_list:
                 newgen2.lvlup()
             gen_lvl2 += 1
-            bgen_lvl_cost = max(bgen_lvl_cost + 1, int(bgen_lvl_cost * 1.5))
+            bgen_lvl_cost = max(bgen_lvl_cost + 500, int(bgen_lvl_cost * 1.5))
             upgrade_cost2 = int(upgrade_cost2 * 1.4 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
-            elif level >= 75:
-                level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
             bgen_label.config(text=f"Level: {gen_lvl2}")
-            bgen_button.config(text=f"UPGRADE ({bgen_lvl_cost} Levels)")
-    bgen_button = ttk.Button(bgen_frame, text=f"UPGRADE ({bgen_lvl_cost} Levels)", command=upgrader2)
+            bgen_button.config(text=f"UPGRADE ({bgen_lvl_cost}G)")
+    bgen_button = ttk.Button(bgen_frame, text=f"UPGRADE ({bgen_lvl_cost}G)", command=upgrader2)
     bgen_button.grid(row=0, column=1, padx=20)
 
     # Industrial Generator Upgrade
@@ -1990,33 +2160,24 @@ def upgrade_and_stats():
     igen_label = tk.Label(igen_frame, text=f"Level: {gen_lvl3}", font=("Arial", 16))
     igen_label.grid(row=0, column=0, sticky="w")
     def upgrader3():
-        global gen_lvl3, upgrade_cost3, g_given3, level, inflation, igen_lvl_cost
-        if level < igen_lvl_cost:
-            igen_button.config(text="Not enough levels")
-            root.after(200, lambda: igen_button.config(text=f"UPGRADE ({igen_lvl_cost} Levels)"))
+        global gen_lvl3, upgrade_cost3, g_given3, level, inflation, igen_lvl_cost, g
+        if g < igen_lvl_cost:
+            igen_button.config(text="Not enough gold")
+            root.after(200, lambda: igen_button.config(text=f"UPGRADE ({igen_lvl_cost}G)"))
         else:
-            level -= igen_lvl_cost
+            g -= igen_lvl_cost
+            g_label.config(text=f"{g:,.2f}G")
             if len(igen_list) == 0:
                 return
             for igen in igen_list:
                 igen.lvlup()
             gen_lvl3 += 1
-            igen_lvl_cost = max(igen_lvl_cost + 2, int(igen_lvl_cost * 1.5))
+            igen_lvl_cost = max(igen_lvl_cost + 500, int(igen_lvl_cost * 1.5))
             upgrade_cost3 = int(upgrade_cost3 * 1.5 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
-            elif level >= 75:
-                level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
             igen_label.config(text=f"Level: {gen_lvl3}")
-            igen_button.config(text=f"UPGRADE ({igen_lvl_cost} Levels)")
-    igen_button = ttk.Button(igen_frame, text=f"UPGRADE ({igen_lvl_cost} Levels)", command=upgrader3)
+            igen_button.config(text=f"UPGRADE ({igen_lvl_cost}G)")
+    igen_button = ttk.Button(igen_frame, text=f"UPGRADE ({igen_lvl_cost}G)", command=upgrader3)
     igen_button.grid(row=0, column=1, padx=20)
 
     # Randomized Generator Upgrade
@@ -2025,33 +2186,24 @@ def upgrade_and_stats():
     randgen_label = tk.Label(randgen_frame, text=f"Level: {gen_lvl4}", font=("Arial", 16))
     randgen_label.grid(row=0, column=0, sticky="w")
     def upgrader4():
-        global gen_lvl4, upgrade_cost4, g_given4, level, inflation, rand_lvl_cost
-        if level < rand_lvl_cost:
-            randgen_button.config(text="Not enough levels")
-            root.after(200, lambda: randgen_button.config(text=f"UPGRADE ({rand_lvl_cost} Levels)"))
+        global gen_lvl4, upgrade_cost4, g_given4, level, inflation, rand_lvl_cost, g
+        if g < rand_lvl_cost:
+            randgen_button.config(text="Not enough gold")
+            root.after(200, lambda: randgen_button.config(text=f"UPGRADE ({rand_lvl_cost}G)"))
         else:
-            level -= rand_lvl_cost
+            g -= rand_lvl_cost
+            g_label.config(text=f"{g:,.2f}G")
             if len(randgen_list) == 0:
                 return
             for randgen in randgen_list:
                 randgen.lvlup()
             gen_lvl4 += 1
-            rand_lvl_cost = max(rand_lvl_cost + 2, int(rand_lvl_cost * 1.5))
+            rand_lvl_cost = max(rand_lvl_cost + 500, int(rand_lvl_cost * 1.5))
             upgrade_cost4 = int(upgrade_cost4 * 1.5 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
-            if level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
-            elif level >= 75:
-                level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
             randgen_label.config(text=f"Level: {gen_lvl4}")
-            randgen_button.config(text=f"UPGRADE ({rand_lvl_cost} Levels)")
-    randgen_button = ttk.Button(randgen_frame, text=f"UPGRADE ({rand_lvl_cost} Levels)", command=upgrader4)
+            randgen_button.config(text=f"UPGRADE ({rand_lvl_cost}G)")
+    randgen_button = ttk.Button(randgen_frame, text=f"UPGRADE ({rand_lvl_cost}G)", command=upgrader4)
     randgen_button.grid(row=0, column=1, padx=20)
 
     # --- Advanced Generator Upgrades ---
@@ -2062,29 +2214,19 @@ def upgrade_and_stats():
     plasma_upgr_label = tk.Label(plasma_upgr_frame, text=f"Level: {gen_lvl8}", font=("Arial", 16))
     plasma_upgr_label.grid(row=0, column=0, sticky="w")
     def upgrader_plasma():
-        global gen_lvl8, upgrade_cost8, g_given8, level
-        # consume player levels instead of gold
-        if level >= upgrade_cost8:
-            level -= upgrade_cost8
-            # refresh the main level label with tier suffix
-            if level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
-            elif level >= 75:
-                level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
+        global gen_lvl8, upgrade_cost8, g_given8, level, g
+        # use gold instead of levels
+        if g >= upgrade_cost8:
+            g -= upgrade_cost8
+            g_label.config(text=f"{g:,.2f}G")
             gen_lvl8 += 1
             upgrade_cost8 = int(upgrade_cost8 * 1.2)
             g_given8 = int(g_given8 * 1.25)
             plasma_upgr_label.config(text=f"Level: {gen_lvl8}")
-            plasma_upgr_button.config(text=f"UPGRADE ({upgrade_cost8} Levels)")
+            plasma_upgr_button.config(text=f"UPGRADE ({upgrade_cost8}G)")
         else:
-            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost8} levels to upgrade!")
-    plasma_upgr_button = ttk.Button(plasma_upgr_frame, text=f"UPGRADE ({upgrade_cost8} Levels)", command=upgrader_plasma)
+            messagebox.showerror("Not Enough Gold", f"You need {upgrade_cost8}G to upgrade!")
+    plasma_upgr_button = ttk.Button(plasma_upgr_frame, text=f"UPGRADE ({upgrade_cost8}G)", command=upgrader_plasma)
     plasma_upgr_button.grid(row=0, column=1, padx=20)
 
     # Steam Generator Upgrade
@@ -2093,27 +2235,18 @@ def upgrade_and_stats():
     steam_upgr_label = tk.Label(steam_upgr_frame, text=f"Level: {gen_lvl11}", font=("Arial", 16))
     steam_upgr_label.grid(row=0, column=0, sticky="w")
     def upgrader_steam():
-        global gen_lvl11, upgrade_cost11, g_given11, level
-        if level >= upgrade_cost11:
-            level -= upgrade_cost11
-            if level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
-            elif level >= 75:
-                level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
+        global gen_lvl11, upgrade_cost11, g_given11, level, g
+        if g >= upgrade_cost11:
+            g -= upgrade_cost11
+            g_label.config(text=f"{g:,.2f}G")
             gen_lvl11 += 1
             upgrade_cost11 = int(upgrade_cost11 * 1.2)
             g_given11 = int(g_given11 * 1.2)
             steam_upgr_label.config(text=f"Level: {gen_lvl11}")
-            steam_upgr_button.config(text=f"UPGRADE ({upgrade_cost11} Levels)")
+            steam_upgr_button.config(text=f"UPGRADE ({upgrade_cost11}G)")
         else:
-            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost11} levels to upgrade!")
-    steam_upgr_button = ttk.Button(steam_upgr_frame, text=f"UPGRADE ({upgrade_cost11} Levels)", command=upgrader_steam)
+            messagebox.showerror("Not Enough Gold", f"You need {upgrade_cost11}G to upgrade!")
+    steam_upgr_button = ttk.Button(steam_upgr_frame, text=f"UPGRADE ({upgrade_cost11}G)", command=upgrader_steam)
     steam_upgr_button.grid(row=0, column=1, padx=20)
 
     # Void Generator Upgrade
@@ -2122,27 +2255,18 @@ def upgrade_and_stats():
     void_upgr_label = tk.Label(void_upgr_frame, text=f"Level: {gen_lvl9}", font=("Arial", 16))
     void_upgr_label.grid(row=0, column=0, sticky="w")
     def upgrader_void():
-        global gen_lvl9, upgrade_cost9, g_given9, level
-        if level >= upgrade_cost9:
-            level -= upgrade_cost9
-            if level >= 100:
-                level_label.config(text=f"Level: {level} (IV)")
-            elif level >= 75:
-                level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
+        global gen_lvl9, upgrade_cost9, g_given9, level, g
+        if g >= upgrade_cost9:
+            g -= upgrade_cost9
+            g_label.config(text=f"{g:,.2f}G")
             gen_lvl9 += 1
             upgrade_cost9 = int(upgrade_cost9 * 1.2)
             g_given9 = int(g_given9 * 1.3)
             void_upgr_label.config(text=f"Level: {gen_lvl9}")
-            void_upgr_button.config(text=f"UPGRADE ({upgrade_cost9} Levels)")
+            void_upgr_button.config(text=f"UPGRADE ({upgrade_cost9}G)")
         else:
-            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost9} levels to upgrade!")
-    void_upgr_button = ttk.Button(void_upgr_frame, text=f"UPGRADE ({upgrade_cost9} Levels)", command=upgrader_void)
+            messagebox.showerror("Not Enough Gold", f"You need {upgrade_cost9}G to upgrade!")
+    void_upgr_button = ttk.Button(void_upgr_frame, text=f"UPGRADE ({upgrade_cost9}G)", command=upgrader_void)
     void_upgr_button.grid(row=0, column=1, padx=20)
 
     # Chronos Generator Upgrade
@@ -2151,27 +2275,23 @@ def upgrade_and_stats():
     chronos_upgr_label = tk.Label(chronos_upgr_frame, text=f"Level: {gen_lvl10}", font=("Arial", 16))
     chronos_upgr_label.grid(row=0, column=0, sticky="w")
     def upgrader_chronos():
-        global gen_lvl10, upgrade_cost10, g_given10, level
+        global gen_lvl10, upgrade_cost10, g_given10, level, g
         if level >= upgrade_cost10:
             level -= upgrade_cost10
             if level >= 100:
                 level_label.config(text=f"Level: {level} (IV)")
             elif level >= 75:
                 level_label.config(text=f"Level: {level} (III)")
-            elif level >= 50:
-                level_label.config(text=f"Level: {level} (II)")
-            elif level >= 25:
-                level_label.config(text=f"Level: {level} (I)")
-            else:
-                level_label.config(text=f"Level: {level}")
+            g -= upgrade_cost10
+            g_label.config(text=f"{g:,.2f}G")
             gen_lvl10 += 1
             upgrade_cost10 = int(upgrade_cost10 * 1.2)
             g_given10 = int(g_given10 * 1.3)
             chronos_upgr_label.config(text=f"Level: {gen_lvl10}")
-            chronos_upgr_button.config(text=f"UPGRADE ({upgrade_cost10} Levels)")
+            chronos_upgr_button.config(text=f"UPGRADE ({upgrade_cost10}G)")
         else:
-            messagebox.showerror("Not Enough Levels", f"You need {upgrade_cost10} levels to upgrade!")
-    chronos_upgr_button = ttk.Button(chronos_upgr_frame, text=f"UPGRADE ({upgrade_cost10} Levels)", command=upgrader_chronos)
+            messagebox.showerror("Not Enough Gold", f"You need {upgrade_cost10}G to upgrade!")
+    chronos_upgr_button = ttk.Button(chronos_upgr_frame, text=f"UPGRADE ({upgrade_cost10}G)", command=upgrader_chronos)
     chronos_upgr_button.grid(row=0, column=1, padx=20)
 
     close_button = ttk.Button(upgrade_tab, text="Close Window", command=win.destroy)
@@ -2912,6 +3032,25 @@ log_button = ttk.Button(center_panel, text="View Log", command=open_log_window)
 log_button.place(x=20, y=20)
 
 # G display
+# A function that validates and sanitizes loaded values
+def sanitize_value(value, default, min_val=None, max_val=None):
+    """Sanitize a value from save file to prevent exploits"""
+    if value is None:
+        return default
+    # Check for invalid types
+    if not isinstance(value, (int, float)):
+        return default
+    # Check for NaN or Infinity
+    import math
+    if math.isnan(value) or math.isinf(value):
+        return default
+    # Check bounds if specified
+    if min_val is not None and value < min_val:
+        return default
+    if max_val is not None and value > max_val:
+        return default
+    return value
+
 # A function that formats the G display
 def format(value):
     suffixes = [
@@ -3403,113 +3542,115 @@ def load_game():
         with open(save_path, "r") as f:
             save_data = json.load(f)
 
-        # Restore values
-        g = save_data.get("g", 0)
-        taxtime = save_data.get("taxtime", 300)
-        clickg = save_data.get("clickg", 1)
-        gen_price = save_data.get("gen_price", 10)
-        gen_shop_amnt = save_data.get("gen_shop_amnt", 1)
-        gen_amnt = save_data.get("gen_amnt", 0)
-        g_given1 = save_data.get("g_given1", 1)
-        gen_lvl = save_data.get("gen_lvl", 1)
-        upgrade_cost = save_data.get("upgrade_cost", 100)
-        bgen_price = save_data.get("bgen_price", 100)
-        bgen_shop_amnt = save_data.get("bgen_shop_amnt", 1)
-        bgen_amnt = save_data.get("bgen_amnt", 0)
-        g_given2 = save_data.get("g_given2", 10)
-        gen_lvl2 = save_data.get("gen_lvl2", 1)
-        upgrade_cost2 = save_data.get("upgrade_cost2", 200)
-        gen_stock = save_data.get("gen_stock", 15)
-        bgen_stock = save_data.get("bgen_stock", 10)
-        igen_stock = save_data.get("igen_stock", 10)
-        gen_lvl3 = save_data.get("gen_lvl3", 1)
-        g_given3 = save_data.get("g_given3", 100)
-        upgrade_cost3 = save_data.get("upgrade_cost3", 200)
-        igen_price = save_data.get("igen_price", 250)
-        igen_shop_amnt = save_data.get("igen_shop_amnt", 1)
-        igen_amnt = save_data.get("igen_amnt", 0)
-        current_exp = save_data.get("current_exp", 0)
-        next_level_exp = save_data.get("next_level_exp", 100)
-        level = save_data.get("level", 1)
-        randgen_price = save_data.get("randgen_price", 77.7)
-        randgen_shop_amnt = save_data.get("randgen_shop_amnt", 1)
-        randgen_amnt = save_data.get("randgen_amnt", 0)
-        g_given4 = save_data.get("g_given4", 100)
-        gen_lvl4 = save_data.get("gen_lvl4", 1)
-        upgrade_cost4 = save_data.get("upgrade_cost4", 777)
-        gen_chance = save_data.get("gen_chance", 0.25)
-        randgen_stock = save_data.get("randgen_stock", 7)
-        total_g_earned = save_data.get("total_g_earned", 0)
-        total_clicks = save_data.get("total_clicks", 0)
-        next_rotation_time = save_data.get("next_rotation_time", 0)
-        current_rotation_index = save_data.get("current_rotation_index", 0)
+        # Restore values with validation to prevent exploits
+        g = sanitize_value(save_data.get("g", 0), 0, 0)
+        taxtime = sanitize_value(save_data.get("taxtime", 300), 300, 1)
+        clickg = sanitize_value(save_data.get("clickg", 1), 1, 0)
+        gen_price = sanitize_value(save_data.get("gen_price", 10), 10, 1)
+        gen_shop_amnt = sanitize_value(save_data.get("gen_shop_amnt", 1), 1, 1, 1000)
+        gen_amnt = sanitize_value(save_data.get("gen_amnt", 0), 0, 0)
+        g_given1 = sanitize_value(save_data.get("g_given1", 1), 1, 0)
+        gen_lvl = sanitize_value(save_data.get("gen_lvl", 1), 1, 1)
+        upgrade_cost = sanitize_value(save_data.get("upgrade_cost", 100), 100, 1)
+        bgen_price = sanitize_value(save_data.get("bgen_price", 100), 100, 1)
+        bgen_shop_amnt = sanitize_value(save_data.get("bgen_shop_amnt", 1), 1, 1, 1000)
+        bgen_amnt = sanitize_value(save_data.get("bgen_amnt", 0), 0, 0)
+        g_given2 = sanitize_value(save_data.get("g_given2", 10), 10, 0)
+        gen_lvl2 = sanitize_value(save_data.get("gen_lvl2", 1), 1, 1)
+        upgrade_cost2 = sanitize_value(save_data.get("upgrade_cost2", 200), 200, 1)
+        gen_stock = sanitize_value(save_data.get("gen_stock", 15), 15, 0, 100)
+        bgen_stock = sanitize_value(save_data.get("bgen_stock", 10), 10, 0, 100)
+        igen_stock = sanitize_value(save_data.get("igen_stock", 10), 10, 0, 100)
+        gen_lvl3 = sanitize_value(save_data.get("gen_lvl3", 1), 1, 1)
+        g_given3 = sanitize_value(save_data.get("g_given3", 100), 100, 0)
+        upgrade_cost3 = sanitize_value(save_data.get("upgrade_cost3", 200), 200, 1)
+        igen_price = sanitize_value(save_data.get("igen_price", 250), 250, 1)
+        igen_shop_amnt = sanitize_value(save_data.get("igen_shop_amnt", 1), 1, 1, 1000)
+        igen_amnt = sanitize_value(save_data.get("igen_amnt", 0), 0, 0)
+        current_exp = sanitize_value(save_data.get("current_exp", 0), 0, 0)
+        next_level_exp = sanitize_value(save_data.get("next_level_exp", 100), 100, 1)
+        level = sanitize_value(save_data.get("level", 1), 1, 1)
+        randgen_price = sanitize_value(save_data.get("randgen_price", 77.7), 77.7, 0.01)
+        randgen_shop_amnt = sanitize_value(save_data.get("randgen_shop_amnt", 1), 1, 1, 1000)
+        randgen_amnt = sanitize_value(save_data.get("randgen_amnt", 0), 0, 0)
+        g_given4 = sanitize_value(save_data.get("g_given4", 100), 100, 0)
+        gen_lvl4 = sanitize_value(save_data.get("gen_lvl4", 1), 1, 1)
+        upgrade_cost4 = sanitize_value(save_data.get("upgrade_cost4", 777), 777, 1)
+        gen_chance = sanitize_value(save_data.get("gen_chance", 0.25), 0.25, 0, 1)
+        randgen_stock = sanitize_value(save_data.get("randgen_stock", 7), 7, 0, 100)
+        total_g_earned = sanitize_value(save_data.get("total_g_earned", 0), 0, 0)
+        total_clicks = sanitize_value(save_data.get("total_clicks", 0), 0, 0)
+        next_rotation_time = sanitize_value(save_data.get("next_rotation_time", 0), 0, 0)
+        current_rotation_index = sanitize_value(save_data.get("current_rotation_index", 0), 0, 0, 10)
         active_upgrades = save_data.get("active_upgrades", [])
-        music_player_unlocked = save_data.get("music_player_unlocked", False)
-        inflation = save_data.get("inflation", 1.0)
-        click_bonus = save_data.get("click_bonus", 1.0)
+        if not isinstance(active_upgrades, list):
+            active_upgrades = []
+        music_player_unlocked = bool(save_data.get("music_player_unlocked", False))
+        inflation = sanitize_value(save_data.get("inflation", 1.0), 1.0, 0.01)
+        click_bonus = sanitize_value(save_data.get("click_bonus", 1.0), 1.0, 0.01)
         
         # Nuclear generator
-        ngen_price = save_data.get("ngen_price", 500)
-        ngen_shop_amnt = save_data.get("ngen_shop_amnt", 1)
-        ngen_amnt = save_data.get("ngen_amnt", 0)
-        ngen_stock = save_data.get("ngen_stock", 3)
-        g_given5 = save_data.get("g_given5", 500)
-        gen_lvl5 = save_data.get("gen_lvl5", 1)
-        upgrade_cost5 = save_data.get("upgrade_cost5", 50)
+        ngen_price = sanitize_value(save_data.get("ngen_price", 500), 500, 1)
+        ngen_shop_amnt = sanitize_value(save_data.get("ngen_shop_amnt", 1), 1, 1, 1000)
+        ngen_amnt = sanitize_value(save_data.get("ngen_amnt", 0), 0, 0)
+        ngen_stock = sanitize_value(save_data.get("ngen_stock", 3), 3, 0, 50)
+        g_given5 = sanitize_value(save_data.get("g_given5", 500), 500, 0)
+        gen_lvl5 = sanitize_value(save_data.get("gen_lvl5", 1), 1, 1)
+        upgrade_cost5 = sanitize_value(save_data.get("upgrade_cost5", 50), 50, 1)
         
         # Quantum generator
-        qgen_price = save_data.get("qgen_price", 2500)
-        qgen_shop_amnt = save_data.get("qgen_shop_amnt", 1)
-        qgen_amnt = save_data.get("qgen_amnt", 0)
-        qgen_stock = save_data.get("qgen_stock", 2)
-        g_given6 = save_data.get("g_given6", 2000)
-        gen_lvl6 = save_data.get("gen_lvl6", 1)
-        upgrade_cost6 = save_data.get("upgrade_cost6", 100)
+        qgen_price = sanitize_value(save_data.get("qgen_price", 2500), 2500, 1)
+        qgen_shop_amnt = sanitize_value(save_data.get("qgen_shop_amnt", 1), 1, 1, 1000)
+        qgen_amnt = sanitize_value(save_data.get("qgen_amnt", 0), 0, 0)
+        qgen_stock = sanitize_value(save_data.get("qgen_stock", 2), 2, 0, 50)
+        g_given6 = sanitize_value(save_data.get("g_given6", 2000), 2000, 0)
+        gen_lvl6 = sanitize_value(save_data.get("gen_lvl6", 1), 1, 1)
+        upgrade_cost6 = sanitize_value(save_data.get("upgrade_cost6", 100), 100, 1)
         
         # Fusion generator
-        fgen_price = save_data.get("fgen_price", 15000)
-        fgen_shop_amnt = save_data.get("fgen_shop_amnt", 1)
-        fgen_amnt = save_data.get("fgen_amnt", 0)
-        fgen_stock = save_data.get("fgen_stock", 1)
-        g_given7 = save_data.get("g_given7", 10000)
-        gen_lvl7 = save_data.get("gen_lvl7", 1)
-        upgrade_cost7 = save_data.get("upgrade_cost7", 200)
+        fgen_price = sanitize_value(save_data.get("fgen_price", 15000), 15000, 1)
+        fgen_shop_amnt = sanitize_value(save_data.get("fgen_shop_amnt", 1), 1, 1, 1000)
+        fgen_amnt = sanitize_value(save_data.get("fgen_amnt", 0), 0, 0)
+        fgen_stock = sanitize_value(save_data.get("fgen_stock", 1), 1, 0, 50)
+        g_given7 = sanitize_value(save_data.get("g_given7", 10000), 10000, 0)
+        gen_lvl7 = sanitize_value(save_data.get("gen_lvl7", 1), 1, 1)
+        upgrade_cost7 = sanitize_value(save_data.get("upgrade_cost7", 200), 200, 1)
         
         # Plasma generator
-        plasma_price = save_data.get("plasma_price", 50000)
-        plasma_shop_amnt = save_data.get("plasma_shop_amnt", 1)
-        plasma_amnt = save_data.get("plasma_amnt", 0)
-        plasma_stock = save_data.get("plasma_stock", 1)
-        g_given8 = save_data.get("g_given8", 2500)
-        gen_lvl8 = save_data.get("gen_lvl8", 1)
-        upgrade_cost8 = save_data.get("upgrade_cost8", 500)
+        plasma_price = sanitize_value(save_data.get("plasma_price", 50000), 50000, 1)
+        plasma_shop_amnt = sanitize_value(save_data.get("plasma_shop_amnt", 1), 1, 1, 1000)
+        plasma_amnt = sanitize_value(save_data.get("plasma_amnt", 0), 0, 0)
+        plasma_stock = sanitize_value(save_data.get("plasma_stock", 1), 1, 0, 50)
+        g_given8 = sanitize_value(save_data.get("g_given8", 2500), 2500, 0)
+        gen_lvl8 = sanitize_value(save_data.get("gen_lvl8", 1), 1, 1)
+        upgrade_cost8 = sanitize_value(save_data.get("upgrade_cost8", 500), 500, 1)
         
         # Steam generator
-        steam_price = save_data.get("steam_price", 5000)
-        steam_shop_amnt = save_data.get("steam_shop_amnt", 1)
-        steam_amnt = save_data.get("steam_amnt", 0)
-        steam_stock = save_data.get("steam_stock", 10)
-        g_given11 = save_data.get("g_given11", 500)
-        gen_lvl11 = save_data.get("gen_lvl11", 1)
-        upgrade_cost11 = save_data.get("upgrade_cost11", 250)
+        steam_price = sanitize_value(save_data.get("steam_price", 5000), 5000, 1)
+        steam_shop_amnt = sanitize_value(save_data.get("steam_shop_amnt", 1), 1, 1, 1000)
+        steam_amnt = sanitize_value(save_data.get("steam_amnt", 0), 0, 0)
+        steam_stock = sanitize_value(save_data.get("steam_stock", 10), 10, 0, 50)
+        g_given11 = sanitize_value(save_data.get("g_given11", 500), 500, 0)
+        gen_lvl11 = sanitize_value(save_data.get("gen_lvl11", 1), 1, 1)
+        upgrade_cost11 = sanitize_value(save_data.get("upgrade_cost11", 250), 250, 1)
         
         # Void generator
-        void_price = save_data.get("void_price", 200000)
-        void_shop_amnt = save_data.get("void_shop_amnt", 1)
-        void_amnt = save_data.get("void_amnt", 0)
-        void_stock = save_data.get("void_stock", 1)
-        g_given9 = save_data.get("g_given9", 10000)
-        gen_lvl9 = save_data.get("gen_lvl9", 1)
-        upgrade_cost9 = save_data.get("upgrade_cost9", 1000)
+        void_price = sanitize_value(save_data.get("void_price", 200000), 200000, 1)
+        void_shop_amnt = sanitize_value(save_data.get("void_shop_amnt", 1), 1, 1, 1000)
+        void_amnt = sanitize_value(save_data.get("void_amnt", 0), 0, 0)
+        void_stock = sanitize_value(save_data.get("void_stock", 1), 1, 0, 50)
+        g_given9 = sanitize_value(save_data.get("g_given9", 10000), 10000, 0)
+        gen_lvl9 = sanitize_value(save_data.get("gen_lvl9", 1), 1, 1)
+        upgrade_cost9 = sanitize_value(save_data.get("upgrade_cost9", 1000), 1000, 1)
         
         # Chronos generator
-        chronos_price = save_data.get("chronos_price", 1000000)
-        chronos_shop_amnt = save_data.get("chronos_shop_amnt", 1)
-        chronos_amnt = save_data.get("chronos_amnt", 0)
-        chronos_stock = save_data.get("chronos_stock", 1)
-        g_given10 = save_data.get("g_given10", 50000)
-        gen_lvl10 = save_data.get("gen_lvl10", 1)
-        upgrade_cost10 = save_data.get("upgrade_cost10", 2000)
+        chronos_price = sanitize_value(save_data.get("chronos_price", 1000000), 1000000, 1)
+        chronos_shop_amnt = sanitize_value(save_data.get("chronos_shop_amnt", 1), 1, 1, 1000)
+        chronos_amnt = sanitize_value(save_data.get("chronos_amnt", 0), 0, 0)
+        chronos_stock = sanitize_value(save_data.get("chronos_stock", 1), 1, 0, 50)
+        g_given10 = sanitize_value(save_data.get("g_given10", 50000), 50000, 0)
+        gen_lvl10 = sanitize_value(save_data.get("gen_lvl10", 1), 1, 1)
+        upgrade_cost10 = sanitize_value(save_data.get("upgrade_cost10", 2000), 2000, 1)
         
         level_label.config(text=f"Level: {level}")
         level_vis['maximum'] = next_level_exp
