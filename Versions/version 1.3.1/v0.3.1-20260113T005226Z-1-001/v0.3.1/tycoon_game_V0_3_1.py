@@ -57,6 +57,7 @@ gen_amnt = 0
 g_given1 = 0.1
 gen_lvl = 1
 upgrade_cost = 100
+std_lvl_cost = 2    # level cost for standard gen upgrade (increases over time)
 #massive generators
 bgen_price = 100
 bgen_shop_amnt = 1
@@ -65,6 +66,7 @@ bgen_list = []
 g_given2 = 1
 gen_lvl2 = 1
 upgrade_cost2 = 200
+bgen_lvl_cost = 3   # level cost for massive gen upgrade (increases over time)
 #industrial generators
 igen_price = 250
 igen_shop_amnt = 1
@@ -73,6 +75,7 @@ igen_list = []
 g_given3 = 10
 gen_lvl3 = 1
 upgrade_cost3 = 200
+igen_lvl_cost = 5   # level cost for industrial gen upgrade (increases over time)
 #random generators
 randgen_price = 777
 randgen_shop_amnt = 1
@@ -81,6 +84,7 @@ randgen_list = []
 g_given4 = 100
 gen_lvl4 = 1
 upgrade_cost4 = 777
+rand_lvl_cost = 5   # level cost for random gen upgrade (increases over time)
 gen_chance = 0.25
 # nuclear generators
 ngen_price = 500
@@ -740,6 +744,9 @@ def steam_fix_minigame(gen_list_to_fix):
     if not gen_list_to_fix:
         messagebox.showinfo("No Generators", "You have no Steam generators to fix!")
         return
+    if all(gobj.running for gobj in gen_list_to_fix):
+        messagebox.showinfo("All Good", "All Steam generators are already running!")
+        return
 
     clicks_needed = 8  # More clicks since it breaks easily
     clicks = [0]
@@ -799,6 +806,9 @@ def steam_fix_minigame(gen_list_to_fix):
 def plasma_fix(gen_list_to_fix):
     if not gen_list_to_fix:
         messagebox.showinfo("No Generators", "You have no Plasma generators to fix!")
+        return
+    if all(gobj.running for gobj in gen_list_to_fix):
+        messagebox.showinfo("All Good", "All Plasma generators are already running!")
         return
 
     clicks_needed = 6
@@ -882,6 +892,9 @@ def plasma_fix(gen_list_to_fix):
 def void_fix(gen_list_to_fix):
     if not gen_list_to_fix:
         messagebox.showinfo("No Generators", "You have no Void generators to fix!")
+        return
+    if all(gobj.running for gobj in gen_list_to_fix):
+        messagebox.showinfo("All Good", "All Void generators are already running!")
         return
 
     success_needed = 5
@@ -976,6 +989,9 @@ def void_fix(gen_list_to_fix):
 def chronos_fix(gen_list_to_fix):
     if not gen_list_to_fix:
         messagebox.showinfo("No Generators", "You have no Chronos generators to fix!")
+        return
+    if all(gobj.running for gobj in gen_list_to_fix):
+        messagebox.showinfo("All Good", "All Chronos generators are already running!")
         return
 
     success_needed = 5
@@ -1232,6 +1248,7 @@ def shop():
             bgen_shop_amnt_label.config(text = f"Current amount: {len(bgen_list)}", font = ("Arial", 14))
             bgen_stock_label.config(text=f"Stock: {bgen_stock}")
             bgen_price = int(bgen_price * 1.15)
+            bgen_shop_price_label.config(text = f"Price: {bgen_price}G")
     def iincrease():
         nonlocal ishop_amnt
         global igen_shop_amnt, igen_stock
@@ -1265,6 +1282,7 @@ def shop():
             igen_shop_amnt_label.config(text = f"Current amount: {len(igen_list)}", font = ("Arial", 14))
             igen_stock_label.config(text=f"Stock: {igen_stock}")
             igen_price = int(igen_price * 1.15)
+            igen_shop_price_label.config(text=f"Price: {igen_price}G")
     def randincrease():
         global randgen_shop_amnt, randgen_stock
         if randgen_shop_amnt < randgen_stock:
@@ -1296,9 +1314,10 @@ def shop():
             randgen_shop_amnt_label.config(text = f"Current amount: {len(randgen_list)}", font = ("Arial", 14))
             randgen_stock_label.config(text=f"Stock: {randgen_stock}")
             randgen_price = int(randgen_price * 1.15)
+            randgen_shop_price_label.config(text=f"Price: {randgen_price}G")
     def restock():
-        nonlocal gen_stock_label, bgen_stock_label, randgen_stock_label
-        global gen_stock, bgen_stock, igen_stock, randgen_stock
+        nonlocal gen_stock_label, bgen_stock_label, randgen_stock_label, plasma_stock_label, chronos_stock_label, void_stock_label, steam_stock_label
+        global gen_stock, bgen_stock, igen_stock, randgen_stock, ngen_stock, void_stock, plasma_stock, chronos_stock, steam_stock
         global g
         if g < 100:
             return
@@ -1307,20 +1326,37 @@ def shop():
             # Random chance for BetterGenerators and Industrial Generators to be in stock
         import random
         if random.random() < 0.5:  # 50% chance to appear
-            bgen_stock = random.randint(1, 10)  # 1 or 2 in stock
+            bgen_stock = random.randint(1, 10)  # 1 or 10 in stock
         else:
             bgen_stock = 0  # Not available this time
         if random.random() < 0.3:  # 30% chance to appear
-            igen_stock = random.randint(1, 5)  # 1 or 2 in stock
+            igen_stock = random.randint(1, 5)  # 1 or 5 in stock
         else:
             igen_stock = 0  # Not available this time
         if random.random() < 0.777:  # 77.7% chance to appear
-            randgen_stock = random.randint(1, 5)  # 1 or 2 in stock
+            randgen_stock = random.randint(1, 5)  # 1 or 5 in stock
         else:
             randgen_stock = 0  # Not available this time
+        if random.random() < 0.25:  # 25% chance to appear
+            plasma_stock = random.randint(1, 2)  # 1 or 2 in stock
+        else:
+            plasma_stock = 0  # Not available this time
+        if random.random() < 0.15:  # 15% chance to appear
+            void_stock = random.randint(1, 2)  # 1 or 2 in stock
+        else:
+            void_stock = 0  # Not available this time
+        if random.random() < 0.10:  # 10% chance to appear
+            chronos_stock = random.randint(1, 2)  # 1 or 2 in stock
+        else:
+            chronos_stock = 0  # Not available this time
+        if random.random() < 0.29: # 29% chance to appear
+            steam_stock = random.randint(1,5)
+        else:
+            steam_stock = 0
         gen_stock_label.config(text=f"Stock: {gen_stock}")
         bgen_stock_label.config(text=f"Stock: {bgen_stock}")
         igen_stock_label.config(text = f"Stock: {igen_stock}")
+        
 
     shop_window = tk.Toplevel(root)
     shop_window.title("Shop Menu")
@@ -1435,8 +1471,8 @@ def shop():
 
     randgen_item = tk.Label(randgen_frame, text=f"Randomized G Generator (1-{g_given4}G/s)", font=("Arial", 16))
     randgen_item.grid(row=0, column=0, sticky="w")
-    ishop_amnt = tk.Label(randgen_frame, text=f"amount: {randgen_shop_amnt}", font=("Arial", 16))
-    ishop_amnt.grid(row=0, column=1, padx=20)
+    randgenshop_amnt = tk.Label(randgen_frame, text=f"amount: {randgen_shop_amnt}", font=("Arial", 16))
+    randgenshop_amnt.grid(row=0, column=1, padx=20)
     randgen_shop_amnt_label = tk.Label(randgen_frame, text=f"Current amount: {len(randgen_list)}", font=("Arial", 16))
     randgen_shop_amnt_label.grid(row=1, column=0, sticky="w")
     randgen_shop_price_label = tk.Label(randgen_frame, text=f"Price: {randgen_price}G", font=("Arial", 16))
@@ -1593,6 +1629,9 @@ def upgrade_and_stats():
         if not gen_list_to_fix:
             messagebox.showinfo("No Generators", "You have no generators to fix!")
             return
+        if all(gobj.running for gobj in gen_list_to_fix):
+            messagebox.showinfo("All Good", "All generators are already running!")
+            return
 
         clicks_needed = 5
         clicks = [0]
@@ -1680,6 +1719,9 @@ def upgrade_and_stats():
         global randgen_list
         if not randgen_list:
             messagebox.showinfo("No Generators", "You have no random generators to fix!")
+            return
+        if all(gobj.running for gobj in randgen_list):
+            messagebox.showinfo("All Good", "All random generators are already running!")
             return
 
         success_needed = 5
@@ -1846,23 +1888,50 @@ def upgrade_and_stats():
         win.after(200, update_g_upgr_label)
     update_g_upgr_label()
 
+    # --- Scrollable area for upgrade frames ---
+    upgr_canvas = tk.Canvas(upgrade_tab)
+    upgr_scrollbar = ttk.Scrollbar(upgrade_tab, orient="vertical", command=upgr_canvas.yview)
+    upgr_scrollable_frame = tk.Frame(upgr_canvas)
+
+    upgr_canvas.create_window((0, 0), window=upgr_scrollable_frame, anchor="nw")
+    upgr_canvas.configure(yscrollcommand=upgr_scrollbar.set)
+
+    def on_upgr_frame_configure(event=None):
+        upgr_canvas.configure(scrollregion=upgr_canvas.bbox("all"))
+        upgr_canvas.itemconfig("all", width=upgr_canvas.winfo_width())
+    upgr_scrollable_frame.bind("<Configure>", on_upgr_frame_configure)
+
+    upgr_scrollbar.pack(side="right", fill="y")
+    upgr_canvas.pack(side="left", fill="both", expand=True)
+
+    def _on_upgr_mousewheel(event):
+        upgr_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+    def bind_upgr_scroll(event=None):
+        upgr_canvas.bind_all("<MouseWheel>", _on_upgr_mousewheel)
+
+    upgrade_tab.bind("<Visibility>", bind_upgr_scroll)
+    notebook.bind("<<NotebookTabChanged>>", lambda e: bind_upgr_scroll() if notebook.index(notebook.select()) == 0 else None)
+    bind_upgr_scroll()
+
     # Standard Generator Upgrade
-    stdgen_frame = tk.LabelFrame(upgrade_tab, text="Standard Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    stdgen_frame = tk.LabelFrame(upgr_scrollable_frame, text="Standard Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     stdgen_frame.pack(fill="x", padx=40, pady=10)
     stdgen_label = tk.Label(stdgen_frame, text=f"Level: {gen_lvl}", font=("Arial", 16))
     stdgen_label.grid(row=0, column=0, sticky="w")
     def upgrader():
-        global gen_lvl, upgrade_cost, g_given1, level, inflation
-        if level < 2:
+        global gen_lvl, upgrade_cost, g_given1, level, inflation, std_lvl_cost
+        if level < std_lvl_cost:
             stdgen_button.config(text="Not enough levels")
-            root.after(200, lambda: stdgen_button.config(text=f"UPGRADE (2 Levels)"))
+            root.after(200, lambda: stdgen_button.config(text=f"UPGRADE ({std_lvl_cost} Levels)"))
         else:
-            level -= 2
+            level -= std_lvl_cost
             if len(gen_list) == 0:
                 return
             for newgen in gen_list:
                 newgen.lvlup()
             gen_lvl += 1
+            std_lvl_cost = max(std_lvl_cost + 1, int(std_lvl_cost * 1.5))
             upgrade_cost = int(upgrade_cost * 1.35 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
             if level >= 100:
@@ -1876,27 +1945,28 @@ def upgrade_and_stats():
             else:
                 level_label.config(text=f"Level: {level}")
             stdgen_label.config(text=f"Level: {gen_lvl}")
-            stdgen_button.config(text=f"UPGRADE (2 Levels)")
-    stdgen_button = ttk.Button(stdgen_frame, text=f"UPGRADE (2 Levels)", command=upgrader)
+            stdgen_button.config(text=f"UPGRADE ({std_lvl_cost} Levels)")
+    stdgen_button = ttk.Button(stdgen_frame, text=f"UPGRADE ({std_lvl_cost} Levels)", command=upgrader)
     stdgen_button.grid(row=0, column=1, padx=20)
 
     # Massive Generator Upgrade
-    bgen_frame = tk.LabelFrame(upgrade_tab, text="Massive Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    bgen_frame = tk.LabelFrame(upgr_scrollable_frame, text="Massive Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     bgen_frame.pack(fill="x", padx=40, pady=10)
     bgen_label = tk.Label(bgen_frame, text=f"Level: {gen_lvl2}", font=("Arial", 16))
     bgen_label.grid(row=0, column=0, sticky="w")
     def upgrader2():
-        global gen_lvl2, upgrade_cost2, g_given2, level, inflation
-        if level < 3:
+        global gen_lvl2, upgrade_cost2, g_given2, level, inflation, bgen_lvl_cost
+        if level < bgen_lvl_cost:
             bgen_button.config(text="Not enough levels")
-            root.after(200, lambda: bgen_button.config(text=f"UPGRADE (3 Levels)"))
+            root.after(200, lambda: bgen_button.config(text=f"UPGRADE ({bgen_lvl_cost} Levels)"))
         else:
-            level -= 3
+            level -= bgen_lvl_cost
             if len(bgen_list) == 0:
                 return
             for newgen2 in bgen_list:
                 newgen2.lvlup()
             gen_lvl2 += 1
+            bgen_lvl_cost = max(bgen_lvl_cost + 1, int(bgen_lvl_cost * 1.5))
             upgrade_cost2 = int(upgrade_cost2 * 1.4 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
             if level >= 100:
@@ -1910,27 +1980,28 @@ def upgrade_and_stats():
             else:
                 level_label.config(text=f"Level: {level}")
             bgen_label.config(text=f"Level: {gen_lvl2}")
-            bgen_button.config(text=f"UPGRADE (3 Levels)")
-    bgen_button = ttk.Button(bgen_frame, text=f"UPGRADE (3 Levels)", command=upgrader2)
+            bgen_button.config(text=f"UPGRADE ({bgen_lvl_cost} Levels)")
+    bgen_button = ttk.Button(bgen_frame, text=f"UPGRADE ({bgen_lvl_cost} Levels)", command=upgrader2)
     bgen_button.grid(row=0, column=1, padx=20)
 
     # Industrial Generator Upgrade
-    igen_frame = tk.LabelFrame(upgrade_tab, text="Industrial Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    igen_frame = tk.LabelFrame(upgr_scrollable_frame, text="Industrial Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     igen_frame.pack(fill="x", padx=40, pady=10)
     igen_label = tk.Label(igen_frame, text=f"Level: {gen_lvl3}", font=("Arial", 16))
     igen_label.grid(row=0, column=0, sticky="w")
     def upgrader3():
-        global gen_lvl3, upgrade_cost3, g_given3, level, inflation
-        if level < 5:
+        global gen_lvl3, upgrade_cost3, g_given3, level, inflation, igen_lvl_cost
+        if level < igen_lvl_cost:
             igen_button.config(text="Not enough levels")
-            root.after(200, lambda: igen_button.config(text=f"UPGRADE (5 Levels)"))
+            root.after(200, lambda: igen_button.config(text=f"UPGRADE ({igen_lvl_cost} Levels)"))
         else:
-            level -= 5
+            level -= igen_lvl_cost
             if len(igen_list) == 0:
                 return
             for igen in igen_list:
                 igen.lvlup()
             gen_lvl3 += 1
+            igen_lvl_cost = max(igen_lvl_cost + 2, int(igen_lvl_cost * 1.5))
             upgrade_cost3 = int(upgrade_cost3 * 1.5 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
             if level >= 100:
@@ -1944,27 +2015,28 @@ def upgrade_and_stats():
             else:
                 level_label.config(text=f"Level: {level}")
             igen_label.config(text=f"Level: {gen_lvl3}")
-            igen_button.config(text=f"UPGRADE (5 Levels)")
-    igen_button = ttk.Button(igen_frame, text=f"UPGRADE (5 Levels)", command=upgrader3)
+            igen_button.config(text=f"UPGRADE ({igen_lvl_cost} Levels)")
+    igen_button = ttk.Button(igen_frame, text=f"UPGRADE ({igen_lvl_cost} Levels)", command=upgrader3)
     igen_button.grid(row=0, column=1, padx=20)
 
     # Randomized Generator Upgrade
-    randgen_frame = tk.LabelFrame(upgrade_tab, text="Random Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    randgen_frame = tk.LabelFrame(upgr_scrollable_frame, text="Random Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     randgen_frame.pack(fill="x", padx=40, pady=10)
     randgen_label = tk.Label(randgen_frame, text=f"Level: {gen_lvl4}", font=("Arial", 16))
     randgen_label.grid(row=0, column=0, sticky="w")
     def upgrader4():
-        global gen_lvl4, upgrade_cost4, g_given4, level, inflation
-        if level < 5:
+        global gen_lvl4, upgrade_cost4, g_given4, level, inflation, rand_lvl_cost
+        if level < rand_lvl_cost:
             randgen_button.config(text="Not enough levels")
-            root.after(200, lambda: randgen_button.config(text=f"UPGRADE (5 Levels)"))
+            root.after(200, lambda: randgen_button.config(text=f"UPGRADE ({rand_lvl_cost} Levels)"))
         else:
-            level -= 5
+            level -= rand_lvl_cost
             if len(randgen_list) == 0:
                 return
             for randgen in randgen_list:
                 randgen.lvlup()
             gen_lvl4 += 1
+            rand_lvl_cost = max(rand_lvl_cost + 2, int(rand_lvl_cost * 1.5))
             upgrade_cost4 = int(upgrade_cost4 * 1.5 * inflation)
             inflation *= 1.05  # Increase inflation by 5% each upgrade
             if level >= 100:
@@ -1978,14 +2050,14 @@ def upgrade_and_stats():
             else:
                 level_label.config(text=f"Level: {level}")
             randgen_label.config(text=f"Level: {gen_lvl4}")
-            randgen_button.config(text=f"UPGRADE (5 Levels)")
-    randgen_button = ttk.Button(randgen_frame, text=f"UPGRADE (5 Levels)", command=upgrader4)
+            randgen_button.config(text=f"UPGRADE ({rand_lvl_cost} Levels)")
+    randgen_button = ttk.Button(randgen_frame, text=f"UPGRADE ({rand_lvl_cost} Levels)", command=upgrader4)
     randgen_button.grid(row=0, column=1, padx=20)
 
     # --- Advanced Generator Upgrades ---
     
     # Plasma Generator Upgrade
-    plasma_upgr_frame = tk.LabelFrame(upgrade_tab, text="Plasma Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    plasma_upgr_frame = tk.LabelFrame(upgr_scrollable_frame, text="Plasma Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     plasma_upgr_frame.pack(fill="x", padx=40, pady=10)
     plasma_upgr_label = tk.Label(plasma_upgr_frame, text=f"Level: {gen_lvl8}", font=("Arial", 16))
     plasma_upgr_label.grid(row=0, column=0, sticky="w")
@@ -2016,7 +2088,7 @@ def upgrade_and_stats():
     plasma_upgr_button.grid(row=0, column=1, padx=20)
 
     # Steam Generator Upgrade
-    steam_upgr_frame = tk.LabelFrame(upgrade_tab, text="Steam Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    steam_upgr_frame = tk.LabelFrame(upgr_scrollable_frame, text="Steam Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     steam_upgr_frame.pack(fill="x", padx=40, pady=10)
     steam_upgr_label = tk.Label(steam_upgr_frame, text=f"Level: {gen_lvl11}", font=("Arial", 16))
     steam_upgr_label.grid(row=0, column=0, sticky="w")
@@ -2045,7 +2117,7 @@ def upgrade_and_stats():
     steam_upgr_button.grid(row=0, column=1, padx=20)
 
     # Void Generator Upgrade
-    void_upgr_frame = tk.LabelFrame(upgrade_tab, text="Void Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    void_upgr_frame = tk.LabelFrame(upgr_scrollable_frame, text="Void Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     void_upgr_frame.pack(fill="x", padx=40, pady=10)
     void_upgr_label = tk.Label(void_upgr_frame, text=f"Level: {gen_lvl9}", font=("Arial", 16))
     void_upgr_label.grid(row=0, column=0, sticky="w")
@@ -2074,7 +2146,7 @@ def upgrade_and_stats():
     void_upgr_button.grid(row=0, column=1, padx=20)
 
     # Chronos Generator Upgrade
-    chronos_upgr_frame = tk.LabelFrame(upgrade_tab, text="Chronos Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
+    chronos_upgr_frame = tk.LabelFrame(upgr_scrollable_frame, text="Chronos Generator", font=("Arial", 14, "bold"), padx=20, pady=10)
     chronos_upgr_frame.pack(fill="x", padx=40, pady=10)
     chronos_upgr_label = tk.Label(chronos_upgr_frame, text=f"Level: {gen_lvl10}", font=("Arial", 16))
     chronos_upgr_label.grid(row=0, column=0, sticky="w")
@@ -2128,6 +2200,12 @@ def upgrade_and_stats():
 
     def _on_stats_mousewheel(event):
         stats_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+    def bind_stats_scroll(event=None):
+        stats_canvas.bind_all("<MouseWheel>", _on_stats_mousewheel)
+
+    stats_tab.bind("<Visibility>", bind_stats_scroll)
+    notebook.bind("<<NotebookTabChanged>>", lambda e: bind_stats_scroll() if notebook.index(notebook.select()) == 1 else None, add="+")
     stats_canvas.bind_all("<MouseWheel>", _on_stats_mousewheel)
 
     # Standard Generator
@@ -2691,6 +2769,7 @@ def purchase_upgrade(upgrade_index):
             music_player_unlocked = True
             add_log("Music Player unlocked!")
             messagebox.showinfo("Music Player Unlocked!", "Congratulations! You can now use the music player in the settings menu.")
+            if_mus_unlock()
         else:
             # Regular timed upgrade
             active_upgrades.append({
@@ -2787,7 +2866,7 @@ def tax_collect():
     global g
     x = 0.25
     for i in range(level):
-        x += 0.01
+        x += 0.001
     g -= g * x  # Decrease g by x%
     g = int(g)      # Optional: convert to integer if needed
     g_label.config(text = f"{format(g)}G")
@@ -2933,7 +3012,7 @@ def music_player():
         # Handle the window close event through the GUI's on_closing method
         music_window.protocol("WM_DELETE_WINDOW", gui.on_closing)
 def if_mus_unlock():
-    if not music_player_unlocked:
+    if music_player_unlocked == False:
         custom_mus_button.config(state=tk.DISABLED,text = "Music Player Locked")
     else:
         custom_mus_button.config(state=tk.ACTIVE,text = "Open Dedicated Music Player")
