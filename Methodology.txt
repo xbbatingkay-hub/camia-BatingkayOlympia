@@ -35,6 +35,9 @@ to circumvent this because it acts somewhat independently from the main program.
 - I could have easily used one class to make my app structure, but that was too complicated and the whole thing is kind of too big for me to comprehend without checking it again and again,
 and I have already too much on my hands
 
-
+Ethical Considerations
+- Since the only controversial feature is the pop-ups, I made it so that they don't really act as a process by themselves, and they barely take any memory.
+- They can also be closed with the X on the corner without consequences.
+- No, I won't add a pop-up that will force-crash the game, that's just not cool, because that would been making the player lose their progress.
 
 (methodology written by Bastijn)
