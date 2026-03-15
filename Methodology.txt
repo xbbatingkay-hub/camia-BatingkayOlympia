@@ -28,4 +28,13 @@ Backend Communication (if this counts as it)
 - The functions for each window usually use the same global variables
 - Polling/update loops are used for some labels or buttons (like the money counter), such as in gen_update(), which frequently refreshes UI
 
-Some of the other modules imported into the main game are just Python files I made to store other things, such as the extra generators, the pop-up windows, and the cool music player, or other things already included in the modules
+Key Design Decisions
+- Some of the buttons were made using customtkinter to make them compatible with dark mode, so they look modern.
+- Another thing is that there isn't any audio at the start, because doing so caused a memory leak of some kind. We used an embedded music player programmed by me (bastijn) 
+to circumvent this because it acts somewhat independently from the main program.
+- I could have easily used one class to make my app structure, but that was too complicated and the whole thing is kind of too big for me to comprehend without checking it again and again,
+and I have already too much on my hands
+
+
+
+(methodology written by Bastijn)
