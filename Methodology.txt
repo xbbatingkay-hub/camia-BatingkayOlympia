@@ -40,4 +40,11 @@ Ethical Considerations
 - They can also be closed with the X on the corner without consequences.
 - No, I won't add a pop-up that will force-crash the game, that's just not cool, because that would been making the player lose their progress.
 
+Testing Methods
+- Used both white box and black box testing
+ - White box testing
+  - played my game for a total of 100 hours while developing
+ - Black box testing
+  - made people who didnt know the inner workings of the game play my game because the game isnt made for me but for other people
+
 (methodology written by Bastijn)
