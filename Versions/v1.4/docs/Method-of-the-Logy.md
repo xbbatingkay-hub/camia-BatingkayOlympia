@@ -1,0 +1,51 @@
+# ===== Methodology =====
+
+## Implementation of core features and Technologies used
+- GUI (especially for main menu)
+  - I used Tkinter for the GUI partially because I didn't know that other alternatives existed, and also because it was relatively simple for me, since I didn't work with GUI before.
+  - I also used sv_ttk to make the GUI uniform and clean, although now I'm not sure if it did that, and for Dark Mode for accessibility.
+- Saving and Loading
+  - I used JSON files and the JSON module for saving and loading because it makes it easy to detect flaws in saves during testing, and also served as a way to look at your progress (until I added the player status widget)
+- The Generators
+  - They all generate G, and I used the random module for the Randomized Generator because I needed its output to be randomized.
+- The Fix Minigames
+  - Also used Tkinter for this stuff, and the progressbar that was already with Tkinter was useful for the timing minigame for the Randomized Generator
+- Sounds
+  - I used PyGame because it allows you to play multiple sounds at the same time
+- Taxes
+  - For the timer, I think I used time and datetime, although now I'm not sure
+- Music Player
+  - Honestly, I could've just made the project be this
+  - I used Tkinter for GUI (labels, buttons, frames, sliders for volume control, and the list box for the list of music in the custom_mus folder)
+  - os is used for allowing the program to access the custom_mus folder
+  - Pygame is used for audio
+- Module Installer
+  - I used subprocess to call the "pip install" command to install the packages needed
+  - Sys is used to get the Python executable path to make sure that pip installs in the correct Python version and exits the program if it fails
+  - importlib allows the program to test if the module already exists
+## Backend Communication (if this counts as it)
+- Functions use direct references to other functions
+- The functions for each window usually use the same global variables
+- Polling/update loops are used for some labels or buttons (like the money counter), such as in gen_update(), which frequently refreshes UI
+
+## Key Design Decisions
+- Some of the buttons were made using customtkinter to make them compatible with dark mode, so they look modern.
+- Another thing is that there isn't any audio at the start, because doing so caused a memory leak of some kind. We used an embedded music player programmed by me (bastijn) 
+to circumvent this because it acts somewhat independently from the main program.
+- I could have easily used one class to make my app structure, but that was too complicated and the whole thing is kind of too big for me to comprehend without checking it again and again,
+and I have already too much on my hands
+
+## Ethical Considerations
+- Since the only controversial feature is the pop-ups, I made it so that they don't really act as a process by themselves, and they barely take any memory.
+- They can also be closed with the X on the corner without consequences.
+- No, I won't add a pop-up that will force-crash the game, that's just not cool, because that would been making the player lose their progress.
+
+## Testing Methods
+- Used both white box and black box testing
+ - White box testing
+   - played my game for a total of 100 hours while developing
+ - Black box testing
+   - made people who didnt know the inner workings of the game play my game because the game isnt made for me but for other people
+
+(methodology written by Bastijn)
+
