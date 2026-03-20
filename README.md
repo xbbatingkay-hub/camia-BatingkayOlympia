@@ -4,6 +4,8 @@ MONOCLICKER
 
 MONOCLICKER (MC)
 
+I just made a new release cuz the file was too big. Check it out!
+- Bastijn
 
  # Problem Statement:
  - Most people are bored, but often turn to solutions that leave a negative impact on them (like doomscrolling).
