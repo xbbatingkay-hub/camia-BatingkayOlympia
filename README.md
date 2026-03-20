@@ -93,16 +93,20 @@ Gameplay
 # Example Output
 
 Main menu:
+
 <img width="2559" height="1438" alt="Screenshot 2026-03-04 184347" src="https://github.com/user-attachments/assets/62aba664-b3aa-4022-88e2-a51e0cf906c4" />
 
 Shop menu:
+
 <img width="2559" height="1433" alt="Screenshot 2026-03-04 184350" src="https://github.com/user-attachments/assets/44b8af50-acd0-4e0f-a46b-449f7d4bac45" />
 
 Upgrade and Status Menu
+
 <img width="2559" height="1438" alt="Screenshot 2026-03-04 184353" src="https://github.com/user-attachments/assets/c6881db6-c083-4073-a706-3910c6d1c36e" />
 <img width="2559" height="1439" alt="Screenshot 2026-03-04 184358" src="https://github.com/user-attachments/assets/0bda8008-9c62-47b1-8d95-49ea64b54d57" />
 
 Settings: 
+
 <img width="510" height="443" alt="Screenshot 2026-03-04 184403" src="https://github.com/user-attachments/assets/4706fb35-5e75-4ef3-a8a6-a21b04c07f5a" />
 
 Music player:
