@@ -107,48 +107,7 @@ Settings:
 
 Music player:
 
-
-
-
-
-
-
-
-
-
-
-
-# Methodology
-
-Implementation of core features and Technologies used
-- GUI (especially for main menu)
-  - I used Tkinter for the GUI partially because I didn't know that other alternatives existed, and also because it was relatively simple for me, since I didn't work with GUI before.
-  - I also used sv_ttk to make the GUI uniform and clean, although now I'm not sure if it did that, and for Dark Mode for accessibility.
-- Saving and Loading
-  - I used JSON files and the JSON module for saving and loading because it makes it easy to detect flaws in saves during testing, and also served as a way to look at your progress (until I added the player status widget)
-- The Generators
-  - They all generate G, and I used the random module for the Randomized Generator because I needed its output to be randomized.
-- The Fix Minigames
-  - Also used Tkinter for this stuff, and the progressbar that was already with Tkinter was useful for the timing minigame for the Randomized Generator
-- Sounds
-  - I used PyGame because it allows you to play multiple sounds at the same time
-- Taxes
-  - For the timer, I think I used time and datetime, although now I'm not sure
-- Music Player
-  - Honestly, I could've just made the project be this
-  - I used Tkinter for GUI (labels, buttons, frames, sliders for volume control, and the list box for the list of music in the custom_mus folder)
-  - os is used for allowing the program to access the custom_mus folder
-  - Pygame is used for audio
-- Module Installer
-  - I used subprocess to call the "pip install" command to install the packages needed
-  - Sys is used to get the Python executable path to make sure that pip installs in the correct Python version and exits the program if it fails
-  - importlib allows the program to test if the module already exists
-Backend Communication (if this counts as it)
-- Functions use direct references to other functions
-- The functions for each window usually use the same global variables
-- Polling/update loops are used for some labels or buttons (like the money counter), such as in gen_update(), which frequently refreshes UI
-
-Some of the other modules imported into the main game are just Python files I made to store other things, such as the extra generators, the pop-up windows, and the cool music player, or other things already included in the modules
+<img width="900" height="678" alt="image" src="https://github.com/user-attachments/assets/b0c6c739-10fd-4d2d-bca8-0dd5662eac40" />
 
 ## Contributors
 
