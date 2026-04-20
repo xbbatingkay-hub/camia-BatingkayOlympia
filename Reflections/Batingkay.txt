@@ -1,0 +1,13 @@
+Mi Reflection because its required
+
+Making this project was really cool. I was forced to my limits making this, and looking at my progress now shows me what happens when I hyperfocus on a simple idea, that simple idea being clicking a button and watching a number go up.
+
+I added many things to that, although many other games did it (that I DONT KNOW OF) but I implemented them in my own way (music player, auto-fixer, stock market <-- annoying to make). The many things I learned while developing the game was so astounding, to the point that I started suffering brain fog from the amount of thinking I had to do (and still managed to do OTHER things).
+
+I was CRUSHED when I received my grade for the initial prototype I presented, but it also made me realize that the mindset I used to develop the game was wrong. I was supposed to develop in a way that OTHER PEOPLE could play it, not just me. That was a valuable lesson, and honestly, I probably couldn't have added more cool features without that.
+
+Most of the things I made were by myself, and I would usually write my ideas on like a tissue or something (one reason the code is so messy). Looking back, I probably should've dedicated a singular notebook just for ideating frameworks and backend functions. It's all in the past though.
+
+Yeah that's all I dont wanna write more
+
+- Bastijn
